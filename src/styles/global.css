@@ -395,15 +395,34 @@ img {
 }
 
 /* ============================================================
+   data-reveal-group — staggered skupiny (motion.js přidá .is-visible)
+   ============================================================ */
+[data-reveal-group] > * {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+[data-reveal-group].is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
    Reduced motion overrides
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal], [data-reveal-stagger] > * {
+  [data-reveal], [data-reveal-stagger] > *, [data-reveal-group] > * {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
   .btn-primary {
     animation: none !important;
+  }
+  .crowd-looking {
+    opacity: 1 !important;
+  }
+  .crowd-section {
+    transform: none !important;
   }
 }

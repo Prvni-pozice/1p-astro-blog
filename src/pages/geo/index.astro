@@ -25,7 +25,7 @@ const posts = allPosts.sort((a, b) =>
         <span aria-current="page">GEO</span>
       </nav>
 
-      <div class="cat-header">
+      <div class="cat-header" data-reveal>
         <div class="cat-icon" aria-hidden="true">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="12" cy="12" r="10"></circle>
@@ -50,9 +50,9 @@ const posts = allPosts.sort((a, b) =>
   <div class="cat-posts section">
     <div class="container">
       {posts.length > 0 ? (
-        <div class="posts-grid">
-          {posts.map((post, i) => (
-            <div class="reveal" style={`transition-delay: ${i * 0.06}s`}>
+        <div class="posts-grid" data-reveal-group>
+          {posts.map((post) => (
+            <div>
               <BlogCard post={post} featured={post.data.featured} />
             </div>
           ))}

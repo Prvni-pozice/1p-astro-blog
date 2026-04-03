@@ -68,6 +68,11 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     "keywords": tags.join(', ')
   })} slot="head" />
 
+  <!-- Reading progress bar (motion.js ho řídí) -->
+  <div class="reading-progress-wrap" aria-hidden="true">
+    <div id="readingProgress" class="reading-progress-bar"></div>
+  </div>
+
   <!-- Article Header -->
   <div class="article-hero">
     <div class="container">
@@ -184,6 +189,25 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
 </BaseLayout>
 
 <style>
+  /* ── Reading progress bar ── */
+  .reading-progress-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    z-index: 9999;
+    background: rgba(255,255,255,0.04);
+  }
+  .reading-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--cat-geo) 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reading-progress-wrap { display: none; }
+  }
+
   /* ── Hero ── */
   .article-hero {
     position: relative;

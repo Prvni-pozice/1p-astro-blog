@@ -1,421 +1,205 @@
 ---
 ---
 
-<div class="footer-crowd" aria-hidden="true">
-  <svg
-    viewBox="0 0 900 280"
-    xmlns="http://www.w3.org/2000/svg"
-    class="crowd-svg"
-    preserveAspectRatio="xMidYMax meet"
-  >
-    <defs>
-      <!-- Skin tones -->
-      <radialGradient id="skin1" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="#e8c9a0" />
-        <stop offset="100%" stop-color="#c9a870" />
-      </radialGradient>
-      <radialGradient id="skin2" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="#d4956a" />
-        <stop offset="100%" stop-color="#b5784a" />
-      </radialGradient>
-      <radialGradient id="skin3" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="#f0d8b8" />
-        <stop offset="100%" stop-color="#d4b888" />
-      </radialGradient>
-      <radialGradient id="skin4" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="#c07845" />
-        <stop offset="100%" stop-color="#a05830" />
-      </radialGradient>
-      <radialGradient id="skin5" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="#8b5c3a" />
-        <stop offset="100%" stop-color="#6b3c1a" />
-      </radialGradient>
-      <!-- Eye glow filter -->
-      <filter id="crowdEyeGlow" x="-100%" y="-100%" width="300%" height="300%">
-        <feGaussianBlur stdDeviation="1.5" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-      <!-- Body gradient -->
-      <linearGradient id="bodyGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#1e2a1a" />
-        <stop offset="100%" stop-color="#0e1a10" />
-      </linearGradient>
-      <linearGradient id="bodyGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#1a1a2e" />
-        <stop offset="100%" stop-color="#0e0e1e" />
-      </linearGradient>
-      <linearGradient id="bodyGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#2e1a2e" />
-        <stop offset="100%" stop-color="#1e0e1e" />
-      </linearGradient>
-      <linearGradient id="bodyGrad4" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#1a2a2e" />
-        <stop offset="100%" stop-color="#0e181e" />
-      </linearGradient>
-    </defs>
+<!--
+  FooterCrowd — crossfade crowd sekce
+  Dva obrázky: crowd-away (lidé se dívají různými směry) + crowd-looking (všichni se dívají na vás).
+  Trigger: IntersectionObserver (z motion.js) přidá .is-active → crossfade + scale zoom.
+-->
+<div class="crowd-section" data-crowd-trigger>
 
-    <!-- Background fade -->
-    <rect x="0" y="0" width="900" height="280" fill="url(#crowdBg)" />
-    <defs>
-      <linearGradient id="crowdBg" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#08080d" stop-opacity="0" />
-        <stop offset="60%" stop-color="#08080d" stop-opacity="0.3" />
-        <stop offset="100%" stop-color="#08080d" stop-opacity="0" />
-      </linearGradient>
-    </defs>
+  <!-- crowd-away.webp: lidé se dívají různými směry (výchozí stav)
+       REPLACE: src/assets/footer/crowd-away.webp
+       Rozměry: 1920×600 px, bez průhlednosti, max 150 KB
+       Viz: docs/image-specs.md -->
+  <div class="crowd-img crowd-away" role="presentation">
+    <div class="ph-crowd ph-crowd-away" aria-hidden="true">
+      <span class="ph-crowd-label">crowd-away.webp placeholder<br/><small>Lidé se dívají různými směry</small></span>
+      <div class="ph-silhouettes ph-silhouettes-away" aria-hidden="true"></div>
+    </div>
+  </div>
 
-    <!-- ═══════ Person 1 (far left, woman, curly hair, teal top) ═══════ -->
-    <g class="person" id="person-1">
-      <!-- Body -->
-      <path d="M25,280 L25,180 Q55,165 85,180 L85,280 Z" fill="url(#bodyGrad4)" />
-      <!-- Shoulders -->
-      <path d="M20,185 Q55,170 90,185 L90,210 Q55,195 20,210 Z" fill="#1a2a30" />
-      <!-- Neck -->
-      <rect x="47" y="148" width="16" height="22" rx="5" fill="url(#skin3)" />
-      <!-- Head group -->
-      <g class="p-head" id="p-head-1" style="transform-origin: 55px 152px;">
-        <!-- Curly hair back -->
-        <ellipse cx="55" cy="118" rx="28" ry="24" fill="#2a1a08" />
-        <circle cx="32" cy="112" r="12" fill="#2a1a08" />
-        <circle cx="78" cy="112" r="12" fill="#2a1a08" />
-        <circle cx="42" cy="97" r="11" fill="#2a1a08" />
-        <circle cx="68" cy="97" r="11" fill="#2a1a08" />
-        <circle cx="55" cy="93" r="12" fill="#2a1a08" />
-        <!-- Face -->
-        <ellipse cx="55" cy="122" rx="22" ry="26" fill="url(#skin2)" />
-        <!-- Tech visor/glasses -->
-        <rect x="36" y="115" width="38" height="12" rx="5" fill="#0a1520" stroke="#01d3ae" stroke-width="1.2" opacity="0.9" />
-        <line x1="55" y1="115" x2="55" y2="127" stroke="#01d3ae" stroke-width="0.8" opacity="0.7" />
-        <!-- Eyes behind visor -->
-        <g class="p-eyes" id="p-eyes-1" opacity="0.9">
-          <circle cx="45" cy="121" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" opacity="0" />
-          <circle cx="65" cy="121" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" opacity="0" />
-        </g>
-        <!-- Mouth -->
-        <path d="M47,136 Q55,141 63,136" stroke="#b5784a" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
+  <!-- crowd-looking.webp: STEJNÍ lidé, všichni se dívají do kamery (finální stav)
+       REPLACE: src/assets/footer/crowd-looking.webp
+       Rozměry: 1920×600 px, bez průhlednosti, max 150 KB
+       Viz: docs/image-specs.md -->
+  <div class="crowd-img crowd-looking" role="img" aria-label="Publikum v AR brýlích se dívá na vás">
+    <div class="ph-crowd ph-crowd-looking" aria-hidden="true">
+      <span class="ph-crowd-label">crowd-looking.webp placeholder<br/><small>Všichni se dívají přímo na vás</small></span>
+      <div class="ph-silhouettes ph-silhouettes-looking" aria-hidden="true"></div>
+    </div>
+  </div>
 
-    <!-- ═══════ Person 2 (man, short hair, dark jacket) ═══════ -->
-    <g class="person" id="person-2">
-      <path d="M88,280 L88,170 Q122,155 156,170 L156,280 Z" fill="url(#bodyGrad2)" />
-      <path d="M82,175 Q122,158 162,175 L162,200 Q122,183 82,200 Z" fill="#18182e" />
-      <rect x="112" y="136" width="18" height="24" rx="5" fill="url(#skin1)" />
-      <g class="p-head" id="p-head-2" style="transform-origin: 121px 140px;">
-        <!-- Short hair -->
-        <ellipse cx="121" cy="105" rx="26" ry="24" fill="#1a1208" />
-        <rect x="95" y="95" width="52" height="16" rx="3" fill="#1a1208" />
-        <!-- Face -->
-        <ellipse cx="121" cy="112" rx="24" ry="28" fill="url(#skin1)" />
-        <!-- Glasses (rectangular tech) -->
-        <rect x="100" y="104" width="20" height="13" rx="3" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <rect x="123" y="104" width="20" height="13" rx="3" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <line x1="120" y1="110" x2="123" y2="110" stroke="#aed301" stroke-width="0.9" />
-        <g class="p-eyes" id="p-eyes-2" opacity="0">
-          <circle cx="110" cy="111" r="3" fill="#aed301" filter="url(#crowdEyeGlow)" />
-          <circle cx="133" cy="111" r="3" fill="#aed301" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M111,128 Q121,133 131,128" stroke="#c9a870" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 3 (woman, bun, purple top) ═══════ -->
-    <g class="person" id="person-3">
-      <path d="M165,280 L165,165 Q200,148 235,165 L235,280 Z" fill="url(#bodyGrad3)" />
-      <path d="M158,170 Q200,152 242,170 L242,196 Q200,178 158,196 Z" fill="#28182a" />
-      <rect x="191" y="128" width="18" height="25" rx="5" fill="url(#skin3)" />
-      <g class="p-head" id="p-head-3" style="transform-origin: 200px 132px;">
-        <!-- Bun hair -->
-        <ellipse cx="200" cy="100" rx="25" ry="28" fill="#3d2010" />
-        <circle cx="200" cy="74" r="14" fill="#3d2010" />
-        <circle cx="200" cy="70" r="10" fill="#4a2818" />
-        <!-- Face -->
-        <ellipse cx="200" cy="105" rx="22" ry="26" fill="url(#skin3)" />
-        <!-- Round visor glasses -->
-        <circle cx="190" cy="99" r="10" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <circle cx="210" cy="99" r="10" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <line x1="200" y1="99" x2="200" y2="99" stroke="#aed301" stroke-width="1" />
-        <line x1="180" y1="99" x2="185" y2="99" stroke="#aed301" stroke-width="1" />
-        <line x1="215" y1="99" x2="222" y2="99" stroke="#aed301" stroke-width="1" />
-        <g class="p-eyes" id="p-eyes-3" opacity="0">
-          <circle cx="190" cy="99" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-          <circle cx="210" cy="99" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M190,118 Q200,124 210,118" stroke="#d4b888" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 4 (older man, beard, green jacket — center-left) ═══════ -->
-    <g class="person" id="person-4">
-      <path d="M248,280 L248,160 Q285,143 322,160 L322,280 Z" fill="url(#bodyGrad1)" />
-      <path d="M242,165 Q285,147 328,165 L328,192 Q285,174 242,192 Z" fill="#1e2e1e" />
-      <rect x="275" y="122" width="20" height="26" rx="5" fill="url(#skin4)" />
-      <g class="p-head" id="p-head-4" style="transform-origin: 285px 126px;">
-        <!-- Grey/salt hair -->
-        <ellipse cx="285" cy="92" rx="28" ry="26" fill="#3a3a3a" />
-        <rect x="257" y="82" width="56" height="16" rx="3" fill="#3a3a3a" />
-        <!-- Face -->
-        <ellipse cx="285" cy="99" rx="26" ry="30" fill="url(#skin4)" />
-        <!-- Beard -->
-        <path d="M265,115 Q285,132 305,115 Q305,128 285,135 Q265,128 265,115 Z" fill="#5a4a3a" />
-        <!-- Smart glasses -->
-        <rect x="266" y="90" width="18" height="12" rx="3" fill="none" stroke="#01d3ae" stroke-width="1.2" />
-        <rect x="287" y="90" width="18" height="12" rx="3" fill="none" stroke="#01d3ae" stroke-width="1.2" />
-        <line x1="284" y1="96" x2="287" y2="96" stroke="#01d3ae" stroke-width="0.9" />
-        <g class="p-eyes" id="p-eyes-4" opacity="0">
-          <circle cx="275" cy="96" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" />
-          <circle cx="296" cy="96" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M273,113 Q285,117 297,113" stroke="#a05830" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 5 (center, tall, dark skin, afro) ═══════ -->
-    <g class="person" id="person-5">
-      <path d="M338,280 L338,155 Q377,136 416,155 L416,280 Z" fill="url(#bodyGrad2)" />
-      <path d="M330,160 Q377,140 424,160 L424,188 Q377,168 330,188 Z" fill="#14142a" />
-      <rect x="367" y="114" width="20" height="28" rx="6" fill="url(#skin5)" />
-      <g class="p-head" id="p-head-5" style="transform-origin: 377px 118px;">
-        <!-- Big afro -->
-        <circle cx="377" cy="87" r="36" fill="#1a0a04" />
-        <circle cx="345" cy="98" r="20" fill="#1a0a04" />
-        <circle cx="409" cy="98" r="20" fill="#1a0a04" />
-        <circle cx="352" cy="72" r="18" fill="#1a0a04" />
-        <circle cx="402" cy="72" r="18" fill="#1a0a04" />
-        <!-- Face -->
-        <ellipse cx="377" cy="97" rx="26" ry="30" fill="url(#skin5)" />
-        <!-- Sleek visor glasses -->
-        <path d="M355,89 L399,89 L399,100 Q377,107 355,100 Z"
-              fill="rgba(10,20,30,0.85)"
-              stroke="#aed301"
-              stroke-width="1.2" />
-        <line x1="377" y1="89" x2="377" y2="100" stroke="#aed301" stroke-width="0.7" opacity="0.6" />
-        <g class="p-eyes" id="p-eyes-5" opacity="0">
-          <circle cx="367" cy="94" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-          <circle cx="387" cy="94" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M365,116 Q377,122 389,116" stroke="#6b3c1a" stroke-width="2" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 6 (woman, straight long hair, navy top) ═══════ -->
-    <g class="person" id="person-6">
-      <path d="M428,280 L428,168 Q463,152 498,168 L498,280 Z" fill="url(#bodyGrad2)" />
-      <path d="M422,173 Q463,156 504,173 L504,199 Q463,182 422,199 Z" fill="#101828" />
-      <rect x="453" y="130" width="18" height="24" rx="5" fill="url(#skin3)" />
-      <g class="p-head" id="p-head-6" style="transform-origin: 462px 134px;">
-        <!-- Long straight hair -->
-        <rect x="434" y="88" width="56" height="90" rx="8" fill="#1a0808" />
-        <!-- Face -->
-        <ellipse cx="462" cy="108" rx="23" ry="27" fill="url(#skin3)" />
-        <!-- Elegant thin frames -->
-        <rect x="443" y="100" width="16" height="10" rx="2.5" fill="none" stroke="#aed301" stroke-width="1" />
-        <rect x="462" y="100" width="16" height="10" rx="2.5" fill="none" stroke="#aed301" stroke-width="1" />
-        <line x1="459" y1="105" x2="462" y2="105" stroke="#aed301" stroke-width="0.9" />
-        <g class="p-eyes" id="p-eyes-6" opacity="0">
-          <circle cx="451" cy="105" r="3" fill="#aed301" filter="url(#crowdEyeGlow)" />
-          <circle cx="470" cy="105" r="3" fill="#aed301" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M452,122 Q462,128 472,122" stroke="#d4b888" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 7 (young man, spiky hair, bright) ═══════ -->
-    <g class="person" id="person-7">
-      <path d="M512,280 L512,172 Q548,155 584,172 L584,280 Z" fill="url(#bodyGrad1)" />
-      <path d="M506,177 Q548,159 590,177 L590,204 Q548,186 506,204 Z" fill="#1a2818" />
-      <rect x="539" y="135" width="18" height="24" rx="5" fill="url(#skin1)" />
-      <g class="p-head" id="p-head-7" style="transform-origin: 548px 139px;">
-        <!-- Spiky hair -->
-        <ellipse cx="548" cy="108" rx="24" ry="22" fill="#2a1a04" />
-        <polygon points="548,80 542,100 554,100" fill="#2a1a04" />
-        <polygon points="536,82 532,103 544,103" fill="#2a1a04" />
-        <polygon points="560,82 556,103 568,103" fill="#2a1a04" />
-        <polygon points="548,76 541,97 555,97" fill="#3a2808" />
-        <!-- Face -->
-        <ellipse cx="548" cy="112" rx="22" ry="26" fill="url(#skin1)" />
-        <!-- Sport/gaming style glasses -->
-        <path d="M530,104 Q548,100 566,104 L566,114 Q548,118 530,114 Z"
-              fill="rgba(0,5,15,0.8)"
-              stroke="#01d3ae"
-              stroke-width="1.2" />
-        <line x1="548" y1="100" x2="548" y2="114" stroke="#01d3ae" stroke-width="0.7" opacity="0.5" />
-        <g class="p-eyes" id="p-eyes-7" opacity="0">
-          <circle cx="538" cy="107" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" />
-          <circle cx="558" cy="107" r="3.5" fill="#01d3ae" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M538,128 Q548,134 558,128" stroke="#c9a870" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- ═══════ Person 8 (far right, older woman, grey bun) ═══════ -->
-    <g class="person" id="person-8">
-      <path d="M600,280 L600,175 Q637,158 674,175 L674,280 Z" fill="url(#bodyGrad3)" />
-      <path d="M594,180 Q637,162 680,180 L680,207 Q637,189 594,207 Z" fill="#281828" />
-      <rect x="627" y="138" width="18" height="24" rx="5" fill="url(#skin2)" />
-      <g class="p-head" id="p-head-8" style="transform-origin: 636px 142px;">
-        <!-- Grey bun hair -->
-        <ellipse cx="636" cy="108" rx="26" ry="24" fill="#7a7a7a" />
-        <circle cx="636" cy="84" r="16" fill="#8a8a8a" />
-        <circle cx="636" cy="80" r="12" fill="#909090" />
-        <!-- Face -->
-        <ellipse cx="636" cy="114" rx="23" ry="27" fill="url(#skin2)" />
-        <!-- Classic oval glasses -->
-        <ellipse cx="623" cy="107" rx="11" ry="9" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <ellipse cx="649" cy="107" rx="11" ry="9" fill="none" stroke="#aed301" stroke-width="1.2" />
-        <line x1="634" y1="107" x2="638" y2="107" stroke="#aed301" stroke-width="0.9" />
-        <line x1="612" y1="107" x2="606" y2="107" stroke="#aed301" stroke-width="0.9" />
-        <line x1="660" y1="107" x2="666" y2="107" stroke="#aed301" stroke-width="0.9" />
-        <g class="p-eyes" id="p-eyes-8" opacity="0">
-          <circle cx="623" cy="107" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-          <circle cx="649" cy="107" r="4" fill="#aed301" filter="url(#crowdEyeGlow)" />
-        </g>
-        <path d="M624,127 Q636,132 648,127" stroke="#b5784a" stroke-width="1.5" fill="none" stroke-linecap="round" />
-      </g>
-    </g>
-
-    <!-- Ground fade -->
-    <rect x="0" y="250" width="900" height="30"
-          fill="url(#groundFade)" />
-    <defs>
-      <linearGradient id="groundFade" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#08080d" stop-opacity="0" />
-        <stop offset="100%" stop-color="#08080d" stop-opacity="0.8" />
-      </linearGradient>
-    </defs>
-  </svg>
+  <!-- Glow overlay: záře z AR brýlí po přechodu -->
+  <div class="crowd-glow-overlay" aria-hidden="true"></div>
 </div>
 
-<script>
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const crowdSection = document.querySelector('.footer-crowd');
-  if (!crowdSection) throw new Error('No crowd section');
-
-  // Set default head rotations (before animation)
-  const defaultRotations: Record<string, string> = {
-    'p-head-1': 'rotate(-12deg)',
-    'p-head-2': 'rotate(8deg)',
-    'p-head-3': 'rotate(-6deg)',
-    'p-head-4': 'rotate(15deg)',
-    'p-head-5': 'rotate(-3deg)',
-    'p-head-6': 'rotate(10deg)',
-    'p-head-7': 'rotate(-8deg)',
-    'p-head-8': 'rotate(5deg)',
-  };
-
-  // Apply default rotations
-  Object.entries(defaultRotations).forEach(([id, rot]) => {
-    const el = document.getElementById(id) as SVGGElement | null;
-    if (el) el.style.transform = rot;
-  });
-
-  // Stagger order: from center outward
-  // center: person-5 (idx 4), person-4 (idx 3), person-6 (idx 5), person-3 (idx 2),
-  //         person-7 (idx 6), person-2 (idx 1), person-8 (idx 7), person-1 (idx 0)
-  const staggerOrder = [
-    'p-head-5', 'p-head-4', 'p-head-6',
-    'p-head-3', 'p-head-7',
-    'p-head-2', 'p-head-8',
-    'p-head-1',
-  ];
-  const eyesOrder = [
-    'p-eyes-5', 'p-eyes-4', 'p-eyes-6',
-    'p-eyes-3', 'p-eyes-7',
-    'p-eyes-2', 'p-eyes-8',
-    'p-eyes-1',
-  ];
-
-  function triggerCrowd() {
-    if (prefersReduced) {
-      // Immediately set all heads forward
-      staggerOrder.forEach((id) => {
-        const el = document.getElementById(id) as SVGGElement | null;
-        if (el) {
-          el.classList.add('looking-at-you');
-          el.style.transform = 'rotate(0deg)';
-        }
-      });
-      eyesOrder.forEach((id) => {
-        const el = document.getElementById(id) as SVGGElement | null;
-        if (el) el.style.opacity = '0.9';
-      });
-      return;
-    }
-
-    staggerOrder.forEach((id, i) => {
-      const delay = i * 80 + Math.random() * 60;
-      setTimeout(() => {
-        const el = document.getElementById(id) as SVGGElement | null;
-        if (el) {
-          el.classList.add('looking-at-you');
-        }
-      }, delay);
-    });
-
-    // Eyes glow after heads are turned
-    eyesOrder.forEach((id, i) => {
-      const delay = 1200 + i * 60;
-      setTimeout(() => {
-        const el = document.getElementById(id) as SVGGElement | null;
-        if (el) {
-          el.style.transition = 'opacity 400ms ease';
-          el.style.opacity = '0.9';
-        }
-      }, delay);
-    });
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          triggerCrowd();
-          observer.disconnect();
-        }
-      });
-    },
-    { threshold: 0.3 }
-  );
-
-  observer.observe(crowdSection);
-</script>
-
 <style>
-  .footer-crowd {
+  .crowd-section {
+    position: relative;
     width: 100%;
+    height: clamp(200px, 30vw, 600px);
     overflow: hidden;
     margin-bottom: -2px;
-    line-height: 0;
   }
 
-  .crowd-svg {
+  /* Oba obrázky absolutně, přes celou sekci */
+  .crowd-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+  }
+
+  /* crowd-away je vždy viditelný */
+  .crowd-away {
+    z-index: 1;
+  }
+
+  /* crowd-looking je průhledný → crossfade na trigger */
+  .crowd-looking {
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+  }
+
+  /* Trigger: .is-active přidán z motion.js */
+  .crowd-section.is-active .crowd-looking {
+    opacity: 1;
+  }
+
+  /* Jemný zoom při přechodu */
+  .crowd-section.is-active {
+    transform: scale(1.02);
+    transition: transform 1.5s ease-out;
+  }
+
+  /* Glow overlay — záře z brýlí */
+  .crowd-glow-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    background: radial-gradient(ellipse 60% 40% at 50% 80%, rgba(1,211,174,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease 1s;
+  }
+  .crowd-section.is-active .crowd-glow-overlay {
+    opacity: 1;
+    animation: crowdGlowPulse 4s ease-in-out infinite 1.5s;
+  }
+  @keyframes crowdGlowPulse {
+    0%,100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+  }
+
+  /* ── Placeholder vizuály (dočasné) ── */
+  .ph-crowd {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ph-crowd-away {
+    background: linear-gradient(180deg,
+      #08080d 0%,
+      #0c0d1a 20%,
+      #0e0f1c 50%,
+      #0a0b16 80%,
+      #08080d 100%
+    );
+  }
+
+  .ph-crowd-looking {
+    background: linear-gradient(180deg,
+      #06060c 0%,
+      #0a0c18 20%,
+      #0d1020 50%,
+      #090c16 80%,
+      #06060c 100%
+    );
+  }
+
+  .ph-crowd-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.15);
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+  }
+  .ph-crowd-label small {
     display: block;
+    font-size: 0.65rem;
+    margin-top: 0.2rem;
+    opacity: 0.7;
   }
 
-  /* Head transition animation */
-  .p-head {
-    transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Silhouettes — jednoduché CSS siluety naznačující skupinu lidí */
+  .ph-silhouettes {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 85%;
+    background:
+      /* Řada siluet — hlavy -->
+      radial-gradient(ellipse 3% 8% at 8% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 16% 14%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 24% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 32% 15%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 4% 10% at 41% 12%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 50% 16%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 4% 10% at 59% 12%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 68% 15%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 76% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 84% 14%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 92% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      /* Těla — gradient základ */
+      linear-gradient(180deg, transparent 0%, rgba(10,11,20,0.5) 30%, rgba(8,9,16,0.9) 100%);
   }
 
-  .p-head.looking-at-you {
-    transform: rotate(0deg) !important;
+  .ph-silhouettes-looking {
+    /* Brýle — teal glow efekt u každé siluety */
+    background:
+      radial-gradient(ellipse 1.5% 3% at 8% 19%, rgba(1,211,174,0.4) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 16% 15%, rgba(174,211,1,0.35) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 24% 19%, rgba(1,211,174,0.4) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 32% 16%, rgba(174,211,1,0.35) 0%, transparent 100%),
+      radial-gradient(ellipse 2% 4% at 41% 13%, rgba(1,211,174,0.5) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 50% 17%, rgba(174,211,1,0.4) 0%, transparent 100%),
+      radial-gradient(ellipse 2% 4% at 59% 13%, rgba(1,211,174,0.5) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 68% 16%, rgba(174,211,1,0.35) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 76% 19%, rgba(1,211,174,0.4) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 84% 15%, rgba(174,211,1,0.35) 0%, transparent 100%),
+      radial-gradient(ellipse 1.5% 3% at 92% 19%, rgba(1,211,174,0.4) 0%, transparent 100%),
+      /* Hlavy */
+      radial-gradient(ellipse 3% 8% at 8% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 16% 14%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 24% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 32% 15%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 4% 10% at 41% 12%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 50% 16%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 4% 10% at 59% 12%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 68% 15%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 9% at 76% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 84% 14%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      radial-gradient(ellipse 3% 8% at 92% 18%, rgba(20,22,35,0.9) 0%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, rgba(8,9,16,0.5) 30%, rgba(6,7,14,0.9) 100%);
   }
 
-  /* Person 1 gets slightly longer transition for drama */
-  #p-head-1.looking-at-you { transition-duration: 1100ms; }
-  #p-head-8.looking-at-you { transition-duration: 1000ms; }
-  #p-head-2.looking-at-you { transition-duration: 950ms; }
-  #p-head-7.looking-at-you { transition-duration: 920ms; }
-
+  /* ── Reduced motion: rovnou finální stav ── */
   @media (prefers-reduced-motion: reduce) {
-    .p-head {
-      transition: none !important;
-    }
+    .crowd-looking { opacity: 1 !important; transition: none !important; }
+    .crowd-section { transform: none !important; transition: none !important; }
+    .crowd-glow-overlay { opacity: 1 !important; animation: none !important; }
   }
 </style>

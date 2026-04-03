@@ -69,9 +69,9 @@ const siteUrl = 'https://blog.prvni-pozice.com';
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="První pozice Blog RSS" href="/rss.xml" />
 
-    <!-- Scroll effects module -->
+    <!-- Motion system -->
     <script>
-      import '../scripts/scroll-effects.js';
+      import '../scripts/motion.js';
     </script>
 
     <!-- Schema: Organization -->
@@ -94,24 +94,8 @@ const siteUrl = 'https://blog.prvni-pozice.com';
     </main>
     <Footer />
 
-    <!-- Reveal animation observer -->
-    <script>
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('revealed');
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
-      );
-
-      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-    </script>
-
     <style is:global>
+      /* Legacy .reveal class support (motion.js handles activation) */
       .reveal {
         opacity: 0;
         transform: translateY(20px);
@@ -122,7 +106,7 @@ const siteUrl = 'https://blog.prvni-pozice.com';
         transform: translateY(0);
       }
       @media (prefers-reduced-motion: reduce) {
-        .reveal { opacity: 1; transform: none; }
+        .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
       }
     </style>
   </body>

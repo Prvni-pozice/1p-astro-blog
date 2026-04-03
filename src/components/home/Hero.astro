@@ -1,7 +1,7 @@
 ---
 ---
 
-<section class="hero" aria-label="Úvod">
+<section class="hero" id="heroSection" aria-label="Úvod">
   <!-- Animated nebula background -->
   <div class="hero-nebula" aria-hidden="true">
     <div class="nebula-layer nebula-1"></div>
@@ -12,307 +12,88 @@
   <!-- Dot grid overlay -->
   <div class="hero-dots" aria-hidden="true"></div>
 
-  <!-- MacBook + Robot scene (right side) -->
+  <!-- MacBook + Robot scene (right side) — vrstvený přístup pro reálné fotky -->
   <div class="hero-scene" id="heroScene" aria-hidden="true">
+
+    <!-- Layer 1: Robot body + nohy
+         REPLACE: src/assets/hero/robot-body.webp
+         Rozměry: 800×1000 px, průhledné pozadí (PNG→WebP)
+         Viz: docs/image-specs.md -->
+    <div class="robot-layer robot-body" id="robotBody">
+      <div class="ph ph-robot-body"></div>
+    </div>
+
+    <!-- Layer 2: Robot ramena + paže
+         REPLACE: src/assets/hero/robot-arms.webp
+         Rozměry: 800×600 px, průhledné pozadí
+         Viz: docs/image-specs.md -->
+    <div class="robot-layer robot-arms" id="robotArms">
+      <div class="ph ph-robot-arms"></div>
+    </div>
+
+    <!-- Layer 3: Robot hlava (sleduje kurzor)
+         REPLACE: src/assets/hero/robot-head.webp
+         Rozměry: 400×500 px, průhledné pozadí
+         Viz: docs/image-specs.md -->
+    <div class="robot-layer robot-head" id="robotHead">
+      <div class="ph ph-robot-head"></div>
+    </div>
+
+    <!-- Layer 4: MacBook (CSS 3D transform na scrollu)
+         REPLACE: src/assets/hero/macbook.webp
+         Rozměry: 1000×700 px, průhledné pozadí
+         Viz: docs/image-specs.md -->
+    <div class="macbook-layer" id="macbookLayer">
+      <div class="ph ph-macbook"></div>
+
+      <!-- Layer 5: Screen content HTML overlay — přesně na obrazovku MacBooku -->
+      <div class="screen-content" aria-hidden="true">
+        <div class="sc-line">$ prvni-pozice --mode ai</div>
+        <div class="sc-line sc-dim">▶ GEO engine: <span class="sc-teal">aktivní</span></div>
+        <div class="sc-line sc-dim">▶ SEO analýza: <span class="sc-accent">OK</span></div>
+        <div class="sc-line sc-sep">────────────────────</div>
+        <div class="sc-line">STATUS: <strong class="sc-accent">ONLINE</strong></div>
+        <div class="sc-cursor"></div>
+      </div>
+    </div>
+
+    <!-- Layer 6: Laser paprsky (SVG overlay, průhledný) -->
     <svg
-      id="heroSceneSvg"
-      viewBox="0 0 460 340"
+      class="laser-svg"
+      id="laserSvg"
+      aria-hidden="true"
+      viewBox="0 0 460 600"
+      preserveAspectRatio="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="scene-svg"
-      overflow="visible"
     >
       <defs>
-        <!-- Robot light gradient (dynamic via JS) -->
-        <radialGradient id="robotLightGrad" cx="50%" cy="30%" r="60%" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stop-color="#aed301" stop-opacity="0.18" />
-          <stop offset="100%" stop-color="#1e1e35" stop-opacity="0" />
-        </radialGradient>
-        <!-- Screen glow -->
-        <radialGradient id="screenGlow" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stop-color="#aed301" stop-opacity="0.12" />
-          <stop offset="100%" stop-color="#0a0a18" stop-opacity="0" />
-        </radialGradient>
-        <!-- Drop shadow filter for laser -->
-        <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <!-- Robot eye glow -->
-        <filter id="eyeGlow" x="-80%" y="-80%" width="360%" height="360%">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <filter id="lGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-
-      <!-- ═══════════════════════════════════════════
-           MacBook SVG (isometric-ish, 15° Y tilt)
-           positioned on the right side
-           ═══════════════════════════════════════════ -->
-      <g id="macbook" transform="translate(180, 60)">
-        <!-- Lid shadow -->
-        <ellipse cx="130" cy="175" rx="110" ry="8" fill="rgba(0,0,0,0.35)" />
-
-        <!-- Screen lid -->
-        <g id="macbook-lid">
-          <!-- Lid back panel -->
-          <path d="M15,0 L245,0 L245,155 L15,155 Z"
-                fill="#1a1a2e"
-                stroke="#2a2a45"
-                stroke-width="1.5" />
-          <!-- Lid front face (slight 3D effect) -->
-          <path d="M10,5 L250,5 L250,160 L10,160 Z"
-                fill="#17172a"
-                stroke="#252535"
-                stroke-width="1" />
-          <!-- Screen bezel -->
-          <rect x="18" y="12" width="224" height="136" rx="3"
-                fill="#0a0a18"
-                stroke="#1e1e35"
-                stroke-width="1" />
-          <!-- Screen face (display) -->
-          <rect x="22" y="16" width="216" height="128" rx="2"
-                fill="#080812" />
-          <!-- Screen ambient glow -->
-          <rect x="22" y="16" width="216" height="128" rx="2"
-                fill="url(#screenGlow)"
-                opacity="0.8" />
-
-          <!-- Screen content: ASCII / UI lines in accent color -->
-          <g font-family="'Courier New', monospace" font-size="7" fill="#aed301" opacity="0.75">
-            <text x="30" y="34">$ prvni-pozice --mode ai</text>
-            <text x="30" y="46" opacity="0.5">▶ Inicializace AI modulu...</text>
-            <text x="30" y="58">▶ GEO engine: <tspan fill="#01d3ae">aktivní</tspan></text>
-            <text x="30" y="70" opacity="0.6">▶ SEO analýza: <tspan fill="#aed301">OK</tspan></text>
-            <text x="30" y="90" opacity="0.4">───────────────────────────</text>
-            <text x="30" y="102">STATUS: <tspan fill="#aed301" font-weight="bold">ONLINE</tspan></text>
-            <text x="30" y="114" opacity="0.5">QUERIES: 2,847 / day</text>
-            <text x="30" y="126" opacity="0.4">MODEL: GPT-4o + Gemini 2.0</text>
-          </g>
-
-          <!-- Blinking cursor -->
-          <rect x="30" y="133" width="5" height="9" fill="#aed301" rx="1">
-            <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite" />
-          </rect>
-
-          <!-- Webcam dot -->
-          <circle cx="130" cy="8" r="2" fill="#252535" />
-          <circle cx="130" cy="8" r="1" fill="#1a3a1a" />
-        </g>
-
-        <!-- Base / body of MacBook -->
-        <g id="macbook-base">
-          <!-- Hinge area -->
-          <rect x="10" y="158" width="240" height="6" rx="1" fill="#1e1e32" />
-          <!-- Base top surface -->
-          <path d="M5,164 L255,164 L260,194 L0,194 Z"
-                fill="#16162a"
-                stroke="#232338"
-                stroke-width="1" />
-          <!-- Base face -->
-          <rect x="0" y="194" width="260" height="14" rx="2"
-                fill="#1a1a2e"
-                stroke="#252540"
-                stroke-width="1" />
-
-          <!-- Keyboard area hint -->
-          <g opacity="0.35">
-            <!-- Key rows (simplified) -->
-            <rect x="12" y="168" width="236" height="3" rx="1" fill="#2a2a45" />
-            <rect x="12" y="173" width="236" height="3" rx="1" fill="#252540" />
-            <rect x="12" y="178" width="220" height="3" rx="1" fill="#222238" />
-            <rect x="22" y="183" width="200" height="3" rx="1" fill="#1e1e38" />
-            <!-- Trackpad -->
-            <rect x="88" y="188" width="84" height="3" rx="1" fill="#252540" />
-          </g>
-
-          <!-- Apple logo-ish mark on lid (very subtle) -->
-          <circle cx="130" cy="80" r="10" fill="none" stroke="rgba(174,211,1,0.06)" stroke-width="1" />
-        </g>
-      </g>
-
-      <!-- ═══════════════════════════════════════════
-           Robot SVG (humanoid, left side of scene)
-           ═══════════════════════════════════════════ -->
-      <g id="robot-body" style="transform-origin: 90px 220px; transform: rotate(0deg);">
-
-        <!-- Body light overlay (dynamic gradient) -->
-        <rect x="20" y="80" width="140" height="220" fill="url(#robotLightGrad)" />
-
-        <!-- ── Legs (lower, partially visible) ── -->
-        <g id="robot-legs" opacity="0.7">
-          <!-- Left leg -->
-          <rect x="52" y="260" width="28" height="55" rx="5" fill="#1a1a2e" stroke="#252545" stroke-width="1" />
-          <rect x="54" y="310" width="32" height="10" rx="4" fill="#161628" stroke="#222238" stroke-width="1" />
-          <!-- Right leg -->
-          <rect x="100" y="260" width="28" height="55" rx="5" fill="#1a1a2e" stroke="#252545" stroke-width="1" />
-          <rect x="98" y="310" width="32" height="10" rx="4" fill="#161628" stroke="#222238" stroke-width="1" />
-        </g>
-
-        <!-- ── Torso ── -->
-        <g id="robot-torso" style="transform-origin: 90px 210px; transform: rotate(0deg);">
-          <!-- Torso shape (trapezoidal) -->
-          <path d="M45,265 L50,160 L130,160 L135,265 Z"
-                fill="#1e1e35"
-                stroke="#2a2a45"
-                stroke-width="1.5" />
-          <!-- Torso panel detail -->
-          <rect x="62" y="178" width="56" height="60" rx="6"
-                fill="#161628"
-                stroke="#252545"
-                stroke-width="1" />
-          <!-- Torso LED indicators -->
-          <circle cx="72" cy="192" r="4" fill="#aed301" opacity="0.8">
-            <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.3s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="84" cy="192" r="4" fill="#01d3ae" opacity="0.6">
-            <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.1s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="96" cy="192" r="4" fill="#aed301" opacity="0.4">
-            <animate attributeName="opacity" values="0.4;0.1;0.4" dur="1.8s" repeatCount="indefinite" />
-          </circle>
-          <!-- Torso circuit lines -->
-          <line x1="68" y1="210" x2="112" y2="210" stroke="rgba(174,211,1,0.2)" stroke-width="1" />
-          <line x1="68" y1="217" x2="100" y2="217" stroke="rgba(174,211,1,0.15)" stroke-width="1" />
-          <line x1="68" y1="224" x2="108" y2="224" stroke="rgba(174,211,1,0.1)" stroke-width="1" />
-
-          <!-- ── Shoulders ── -->
-          <g id="robot-shoulders" style="transform-origin: 90px 165px; transform: rotate(0deg);">
-            <!-- Left shoulder -->
-            <path d="M50,160 L20,170 L18,200 L45,205 L45,160 Z"
-                  fill="#1e1e35"
-                  stroke="#2a2a45"
-                  stroke-width="1.5" />
-            <!-- Left arm -->
-            <rect x="8" y="200" width="22" height="60" rx="8"
-                  fill="#1a1a2e"
-                  stroke="#252545"
-                  stroke-width="1" />
-            <!-- Left hand -->
-            <ellipse cx="19" cy="266" rx="11" ry="8" fill="#161628" stroke="#222238" stroke-width="1" />
-
-            <!-- Right shoulder -->
-            <path d="M130,160 L160,170 L162,200 L135,205 L135,160 Z"
-                  fill="#1e1e35"
-                  stroke="#2a2a45"
-                  stroke-width="1.5" />
-            <!-- Right arm -->
-            <rect x="150" y="200" width="22" height="60" rx="8"
-                  fill="#1a1a2e"
-                  stroke="#252545"
-                  stroke-width="1" />
-            <!-- Right hand -->
-            <ellipse cx="161" cy="266" rx="11" ry="8" fill="#161628" stroke="#222238" stroke-width="1" />
-
-            <!-- Neck -->
-            <rect x="78" y="136" width="24" height="26" rx="5"
-                  fill="#1a1a2e"
-                  stroke="#252545"
-                  stroke-width="1" />
-
-            <!-- ── Head ── -->
-            <g id="robot-head" style="transform-origin: 90px 140px; transform: rotate(0deg);">
-              <!-- Head main shape -->
-              <rect x="52" y="78" width="76" height="60" rx="10"
-                    fill="#1e1e35"
-                    stroke="#2a2a45"
-                    stroke-width="2" />
-              <!-- Head top detail -->
-              <rect x="68" y="72" width="44" height="10" rx="5"
-                    fill="#1a1a2e"
-                    stroke="#252545"
-                    stroke-width="1" />
-              <!-- Antenna -->
-              <line x1="90" y1="72" x2="90" y2="52" stroke="#2a2a45" stroke-width="2" />
-              <circle cx="90" cy="49" r="5" fill="#1e1e35" stroke="#aed301" stroke-width="1.5">
-                <animate attributeName="opacity" values="1;0.4;1" dur="2.5s" repeatCount="indefinite" />
-              </circle>
-
-              <!-- Visor / face panel -->
-              <rect x="58" y="88" width="64" height="36" rx="6"
-                    fill="#0a0a18"
-                    stroke="#252545"
-                    stroke-width="1" />
-
-              <!-- Eyes group -->
-              <g id="robot-eyes">
-                <!-- Left eye -->
-                <ellipse cx="74" cy="106" rx="9" ry="7"
-                         fill="#0e0e1e"
-                         stroke="#aed301"
-                         stroke-width="1.5"
-                         filter="url(#eyeGlow)" />
-                <ellipse cx="74" cy="106" rx="5" ry="4" fill="#aed301" opacity="0.9">
-                  <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
-                </ellipse>
-                <circle cx="74" cy="106" r="2" fill="#ffffff" opacity="0.8" />
-
-                <!-- Right eye -->
-                <ellipse cx="106" cy="106" rx="9" ry="7"
-                         fill="#0e0e1e"
-                         stroke="#aed301"
-                         stroke-width="1.5"
-                         filter="url(#eyeGlow)" />
-                <ellipse cx="106" cy="106" rx="5" ry="4" fill="#aed301" opacity="0.9">
-                  <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" begin="0.4s" repeatCount="indefinite" />
-                </ellipse>
-                <circle cx="106" cy="106" r="2" fill="#ffffff" opacity="0.8" />
-              </g>
-
-              <!-- Mouth / speaker grille -->
-              <g stroke="rgba(174,211,1,0.3)" stroke-width="1">
-                <line x1="68" y1="116" x2="112" y2="116" />
-                <line x1="70" y1="120" x2="110" y2="120" />
-                <line x1="72" y1="124" x2="108" y2="124" />
-              </g>
-
-              <!-- Head side panels -->
-              <rect x="52" y="90" width="6" height="20" rx="2"
-                    fill="#161628" stroke="#1e1e35" stroke-width="1" />
-              <rect x="122" y="90" width="6" height="20" rx="2"
-                    fill="#161628" stroke="#1e1e35" stroke-width="1" />
-            </g>
-            <!-- /robot-head -->
-          </g>
-          <!-- /robot-shoulders -->
-        </g>
-        <!-- /robot-torso -->
-
-        <!-- ── Laser beams from eyes ── -->
-        <g id="robot-lasers" filter="url(#laserGlow)">
-          <!-- Left eye laser → MacBook screen center -->
-          <line id="laser-left"
-                x1="74" y1="106"
-                x2="310" y2="140"
-                stroke="#aed301"
-                stroke-width="1.5"
-                stroke-opacity="0.6"
-                stroke-dasharray="4 3"
-                class="laser-beam">
-            <animate attributeName="stroke-opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite" />
-          </line>
-          <!-- Right eye laser → MacBook screen center -->
-          <line id="laser-right"
-                x1="106" y1="106"
-                x2="310" y2="140"
-                stroke="#aed301"
-                stroke-width="1.5"
-                stroke-opacity="0.6"
-                stroke-dasharray="4 3"
-                class="laser-beam">
-            <animate attributeName="stroke-opacity" values="0.6;0.2;0.6" dur="2s" begin="0.3s" repeatCount="indefinite" />
-          </line>
-        </g>
-
-      </g>
-      <!-- /robot-body -->
-
+      <!-- Levé oko → MacBook obrazovka -->
+      <line id="laserLeft"
+        x1="95" y1="160"
+        x2="310" y2="255"
+        stroke="#aed301" stroke-width="1.5"
+        stroke-opacity="0.45" stroke-dasharray="4 3"
+        filter="url(#lGlow)">
+        <animate attributeName="stroke-opacity" values="0.45;0.15;0.45" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Pravé oko → MacBook obrazovka -->
+      <line id="laserRight"
+        x1="128" y1="160"
+        x2="310" y2="255"
+        stroke="#aed301" stroke-width="1.5"
+        stroke-opacity="0.45" stroke-dasharray="4 3"
+        filter="url(#lGlow)">
+        <animate attributeName="stroke-opacity" values="0.45;0.15;0.45" dur="2s" begin="0.3s" repeatCount="indefinite"/>
+      </line>
     </svg>
+
+    <!-- Layer 7: Dynamický světelný odlesk (sleduje kurzor) -->
+    <div class="light-overlay" id="lightOverlay" aria-hidden="true"></div>
   </div>
 
   <!-- Content (left side) -->
@@ -363,133 +144,6 @@
   </div>
 </section>
 
-<script>
-  // prefers-reduced-motion guard
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const heroSection = document.querySelector('.hero') as HTMLElement | null;
-  const robotBody = document.getElementById('robot-body') as SVGGElement | null;
-  const robotTorso = document.getElementById('robot-torso') as SVGGElement | null;
-  const robotShoulders = document.getElementById('robot-shoulders') as SVGGElement | null;
-  const robotHead = document.getElementById('robot-head') as SVGGElement | null;
-  const laserLeft = document.getElementById('laser-left') as SVGLineElement | null;
-  const laserRight = document.getElementById('laser-right') as SVGLineElement | null;
-  const robotLightGrad = document.getElementById('robotLightGrad') as SVGRadialGradientElement | null;
-  const macbook = document.getElementById('macbook') as SVGGElement | null;
-
-  // Mouse tracking
-  if (!prefersReduced && heroSection) {
-    let cx = 0;
-    let cy = 0;
-
-    heroSection.addEventListener('mousemove', (e: MouseEvent) => {
-      const rect = heroSection.getBoundingClientRect();
-      // Normalize -1..1 relative to center
-      cx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      cy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-
-      // Robot body: slight lean
-      if (robotBody) {
-        robotBody.style.transform = `rotate(${cx * 3}deg) translateX(${cx * 2}px)`;
-        robotBody.style.transition = 'transform 300ms cubic-bezier(0.22,1,0.36,1)';
-      }
-      // Torso: follow mouse
-      if (robotTorso) {
-        robotTorso.style.transform = `rotate(${cx * 2}deg)`;
-        robotTorso.style.transition = 'transform 300ms cubic-bezier(0.22,1,0.36,1)';
-      }
-      // Shoulders: counter-rotation
-      if (robotShoulders) {
-        robotShoulders.style.transform = `rotate(${cx * -1}deg)`;
-        robotShoulders.style.transition = 'transform 250ms cubic-bezier(0.22,1,0.36,1)';
-      }
-      // Head: follows more closely
-      if (robotHead) {
-        robotHead.style.transform = `rotate(${cx * 8}deg) translateY(${cy * 3}px)`;
-        robotHead.style.transition = 'transform 150ms cubic-bezier(0.22,1,0.36,1)';
-      }
-
-      // Dynamic lighting: update gradient center
-      if (robotLightGrad) {
-        const gx = (50 + cx * 25).toFixed(1) + '%';
-        const gy = (30 + cy * 20).toFixed(1) + '%';
-        const stops = robotLightGrad.querySelectorAll('stop');
-        robotLightGrad.setAttribute('cx', gx);
-        robotLightGrad.setAttribute('cy', gy);
-      }
-
-      // Laser targeting: move laser endpoints toward cursor position in SVG coords
-      const svgEl = document.getElementById('heroSceneSvg') as SVGSVGElement | null;
-      if (svgEl && laserLeft && laserRight) {
-        const svgRect = svgEl.getBoundingClientRect();
-        const svgW = 460;
-        const svgH = 340;
-        const targetX = ((e.clientX - svgRect.left) / svgRect.width) * svgW;
-        const targetY = ((e.clientY - svgRect.top) / svgRect.height) * svgH;
-        // Blend toward cursor (capped to screen area)
-        const blendX = Math.max(150, Math.min(450, targetX));
-        const blendY = Math.max(20, Math.min(320, targetY));
-        laserLeft.setAttribute('x2', String(blendX));
-        laserLeft.setAttribute('y2', String(blendY));
-        laserRight.setAttribute('x2', String(blendX));
-        laserRight.setAttribute('y2', String(blendY));
-      }
-    });
-
-    // Reset on mouse leave
-    heroSection.addEventListener('mouseleave', () => {
-      if (robotBody) robotBody.style.transform = '';
-      if (robotTorso) robotTorso.style.transform = '';
-      if (robotShoulders) robotShoulders.style.transform = '';
-      if (robotHead) robotHead.style.transform = '';
-      // Reset lasers to MacBook screen
-      if (laserLeft) { laserLeft.setAttribute('x2', '310'); laserLeft.setAttribute('y2', '140'); }
-      if (laserRight) { laserRight.setAttribute('x2', '310'); laserRight.setAttribute('y2', '140'); }
-    });
-  }
-
-  // Scroll → MacBook tilt
-  if (!prefersReduced && macbook) {
-    const heroObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          // Activate MacBook tilt animation based on scroll
-          const onScroll = () => {
-            const heroEl = document.querySelector('.hero') as HTMLElement | null;
-            if (!heroEl) return;
-            const heroH = heroEl.offsetHeight;
-            const scrolled = window.scrollY;
-            const progress = Math.min(scrolled / heroH, 1);
-            if (macbook) {
-              const tilt = progress * 8;
-              macbook.style.transform = `translate(180px, 60px) rotateX(${tilt}deg)`;
-              macbook.style.transition = 'transform 200ms linear';
-
-              // Lasers: at >30% scroll, drift to viewport center
-              if (progress > 0.3 && laserLeft && laserRight) {
-                laserLeft.setAttribute('x2', '230');
-                laserLeft.setAttribute('y2', '170');
-                laserRight.setAttribute('x2', '230');
-                laserRight.setAttribute('y2', '170');
-              } else if (progress <= 0.3 && laserLeft && laserRight) {
-                laserLeft.setAttribute('x2', '310');
-                laserLeft.setAttribute('y2', '140');
-                laserRight.setAttribute('x2', '310');
-                laserRight.setAttribute('y2', '140');
-              }
-            }
-          };
-          window.addEventListener('scroll', onScroll, { passive: true });
-        });
-      },
-      { threshold: 0.1 }
-    );
-    const heroEl = document.querySelector('.hero');
-    if (heroEl) heroObserver.observe(heroEl);
-  }
-</script>
-
 <style>
   /* ── Hero container ── */
   .hero {
@@ -517,32 +171,22 @@
   }
 
   .nebula-1 {
-    width: 70%;
-    height: 60%;
-    top: -10%;
-    left: 20%;
-    background: radial-gradient(ellipse, rgba(174, 211, 1, 0.07) 0%, transparent 70%);
+    width: 70%; height: 60%;
+    top: -10%; left: 20%;
+    background: radial-gradient(ellipse, rgba(174,211,1,0.07) 0%, transparent 70%);
     animation-delay: 0s;
   }
-
   .nebula-2 {
-    width: 50%;
-    height: 50%;
-    bottom: 0;
-    right: -10%;
-    background: radial-gradient(ellipse, rgba(1, 211, 174, 0.05) 0%, transparent 70%);
-    animation-delay: -4s;
-    animation-duration: 16s;
+    width: 50%; height: 50%;
+    bottom: 0; right: -10%;
+    background: radial-gradient(ellipse, rgba(1,211,174,0.05) 0%, transparent 70%);
+    animation-delay: -4s; animation-duration: 16s;
   }
-
   .nebula-3 {
-    width: 40%;
-    height: 40%;
-    bottom: 10%;
-    left: -5%;
-    background: radial-gradient(ellipse, rgba(174, 211, 1, 0.04) 0%, transparent 70%);
-    animation-delay: -8s;
-    animation-duration: 20s;
+    width: 40%; height: 40%;
+    bottom: 10%; left: -5%;
+    background: radial-gradient(ellipse, rgba(174,211,1,0.04) 0%, transparent 70%);
+    animation-delay: -8s; animation-duration: 20s;
   }
 
   @keyframes nebulaPulse {
@@ -554,49 +198,166 @@
   .hero-dots {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(174, 211, 1, 0.12) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(174,211,1,0.12) 1px, transparent 1px);
     background-size: 36px 36px;
     mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.5) 0%, transparent 70%);
     -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.5) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  /* ── Hero scene (MacBook + Robot) ── */
+  /* ── Hero scene — vrstvený kontejner ── */
   .hero-scene {
     position: absolute;
     right: 3%;
     top: 50%;
     transform: translateY(-50%);
-    width: clamp(300px, 40vw, 500px);
-    opacity: 0.85;
+    width: clamp(300px, 42vw, 520px);
+    aspect-ratio: 46 / 60;
+    opacity: 0.9;
     pointer-events: none;
-    will-change: transform;
+    /* transform se mění JS (scroll phase exit) */
   }
 
-  @media (max-width: 900px) {
-    .hero-scene {
-      width: 260px;
-      right: -2%;
-      opacity: 0.4;
-    }
+  /* Všechny vrstvy absolutně uvnitř scény */
+  .robot-layer,
+  .macbook-layer,
+  .laser-svg,
+  .light-overlay {
+    position: absolute;
   }
 
-  @media (max-width: 600px) {
-    .hero-scene {
-      width: 200px;
-      opacity: 0.25;
-      right: -5%;
-    }
+  /* ── Layer 1: Robot tělo ── */
+  .robot-body {
+    left: 6%; top: 28%; width: 36%; height: 68%;
+    z-index: 1;
+    transform-origin: center bottom;
+    /* JS: opacity + translateX při reveal */
+    opacity: 0.08;
   }
 
-  .scene-svg {
-    width: 100%;
-    height: auto;
+  /* ── Layer 2: Robot ramena/paže ── */
+  .robot-arms {
+    left: 1%; top: 36%; width: 48%; height: 18%;
+    z-index: 2;
+    opacity: 0.08;
+  }
+
+  /* ── Layer 3: Robot hlava (cursor tracking) ── */
+  .robot-head {
+    left: 10%; top: 9%; width: 24%; height: 26%;
+    z-index: 3;
+    transform-origin: center bottom;
+    opacity: 0.08;
+  }
+
+  /* ── Layer 4: MacBook ── */
+  .macbook-layer {
+    right: 0; top: 14%; width: 66%; height: 54%;
+    z-index: 4;
+    transform-origin: left center;
+    /* JS: perspective(1200px) rotateY(-20deg) scale(1) → animace při scrollu */
+    transform: perspective(1200px) rotateY(-20deg) scale(1);
+    transition: transform 0.15s linear;
+  }
+
+  /* ── Layer 6: Laser SVG ── */
+  .laser-svg {
+    inset: 0; width: 100%; height: 100%;
+    z-index: 5;
     overflow: visible;
   }
 
-  .laser-beam {
-    transition: x2 0.4s ease, y2 0.4s ease;
+  /* ── Layer 7: Světelný odlesk ── */
+  .light-overlay {
+    inset: 0;
+    z-index: 6;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+    transition: background 0.15s ease;
+  }
+
+  /* ── Placeholder vizuály (dočasné, dokud nejsou reálné fotky) ── */
+  .ph {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+
+  /* Robot tělo — tvar trupu */
+  .ph-robot-body {
+    background:
+      radial-gradient(circle 4px at 38% 28%, rgba(174,211,1,0.5) 0%, transparent 100%),
+      radial-gradient(circle 4px at 54% 28%, rgba(1,211,174,0.4) 0%, transparent 100%),
+      radial-gradient(circle 4px at 70% 28%, rgba(174,211,1,0.3) 0%, transparent 100%),
+      linear-gradient(180deg, rgba(30,30,64,0.5) 22%, rgba(16,16,40,0.8) 22%, rgba(16,16,40,0.8) 68%, transparent 68%),
+      linear-gradient(170deg, #1e2040 0%, #141525 55%, #0e0f1a 100%);
+    clip-path: polygon(16% 0%, 84% 0%, 92% 8%, 96% 100%, 4% 100%, 8% 8%);
+  }
+
+  /* Robot ramena/paže */
+  .ph-robot-arms {
+    background: linear-gradient(180deg, #1c1d38 0%, #12131e 100%);
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* Robot hlava — visor + oči */
+  .ph-robot-head {
+    background:
+      radial-gradient(circle 5px at 30% 44%, rgba(174,211,1,0.55) 0%, rgba(174,211,1,0.1) 80%, transparent 100%),
+      radial-gradient(circle 5px at 68% 44%, rgba(174,211,1,0.55) 0%, rgba(174,211,1,0.1) 80%, transparent 100%),
+      linear-gradient(180deg, transparent 30%, rgba(8,10,24,0.88) 30%, rgba(8,10,24,0.88) 58%, transparent 58%),
+      linear-gradient(135deg, #1e2040 0%, #16172a 100%);
+    border-radius: 14px 14px 10px 10px;
+    border: 1px solid rgba(174,211,1,0.08);
+  }
+
+  /* MacBook — lid + base */
+  .ph-macbook {
+    background:
+      linear-gradient(180deg, #0a0a18 0%, #0a0a18 62%, #1e1e35 62%, #1e1e35 66%, #181828 66%, #181828 100%);
+    border-radius: 8px 8px 4px 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* ── Screen content HTML overlay ── */
+  .screen-content {
+    position: absolute;
+    top: 5%; left: 6%; right: 6%; height: 54%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    padding: 0.6em 0.8em;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(5px, 0.8vw, 9px);
+    color: rgba(174,211,1,0.75);
+    overflow: hidden;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .sc-line { line-height: 1.4; white-space: nowrap; }
+  .sc-dim  { opacity: 0.55; }
+  .sc-sep  { opacity: 0.25; }
+  .sc-teal { color: #01d3ae; }
+  .sc-accent { color: #aed301; font-weight: 700; }
+
+  .sc-cursor {
+    width: 5px; height: 9px;
+    background: #aed301;
+    border-radius: 1px;
+    margin-top: 0.2em;
+    animation: blink 1.1s step-end infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ── Mobile: scéna menší, bez mouse trackingu ── */
+  @media (max-width: 900px) {
+    .hero-scene { width: 260px; right: -2%; opacity: 0.45; }
+  }
+  @media (max-width: 600px) {
+    .hero-scene { width: 190px; opacity: 0.22; right: -5%; }
+    .screen-content { display: none; }
   }
 
   /* ── Content ── */
@@ -616,25 +377,20 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     color: var(--accent);
-    background: rgba(174, 211, 1, 0.08);
-    border: 1px solid rgba(174, 211, 1, 0.2);
+    background: rgba(174,211,1,0.08);
+    border: 1px solid rgba(174,211,1,0.2);
     border-radius: 100px;
     padding: 0.35rem 0.9rem;
     margin-bottom: 1.75rem;
   }
 
   .badge-dot {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     background: var(--accent);
     border-radius: 50%;
     animation: badgeBlink 2s ease-in-out infinite;
   }
-
-  @keyframes badgeBlink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-  }
+  @keyframes badgeBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   .hero-title {
     font-size: clamp(2.25rem, 6vw, 4rem);
@@ -643,10 +399,7 @@
     letter-spacing: -0.03em;
   }
 
-  .hero-accent {
-    color: var(--accent);
-    display: inline;
-  }
+  .hero-accent { color: var(--accent); display: inline; }
 
   .hero-lead {
     font-size: clamp(1rem, 2vw, 1.15rem);
@@ -655,12 +408,8 @@
     max-width: 56ch;
     margin-bottom: 2rem;
   }
+  .hero-lead strong { color: var(--text); }
 
-  .hero-lead strong {
-    color: var(--text);
-  }
-
-  /* ── Actions ── */
   .hero-actions {
     display: flex;
     align-items: center;
@@ -681,12 +430,8 @@
     padding: 0.7rem 1.5rem;
     border-radius: 100px;
     text-decoration: none;
-    transition:
-      background var(--duration) var(--ease),
-      transform var(--duration) var(--ease),
-      box-shadow var(--duration) var(--ease);
+    transition: background var(--duration) var(--ease), transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
   }
-
   .btn-primary:hover {
     background: var(--accent-hover);
     color: #08080d;
@@ -706,12 +451,8 @@
     padding: 0.7rem 0;
     transition: color var(--duration) var(--ease);
   }
+  .btn-ghost:hover { color: var(--text); }
 
-  .btn-ghost:hover {
-    color: var(--text);
-  }
-
-  /* ── Stats ── */
   .hero-stats {
     display: flex;
     align-items: center;
@@ -743,5 +484,14 @@
     width: 1px;
     height: 32px;
     background: var(--border);
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .nebula-layer { animation: none !important; }
+    .sc-cursor    { animation: none !important; }
+    .badge-dot    { animation: none !important; }
+    .macbook-layer { transform: none !important; transition: none !important; }
+    .robot-body, .robot-arms, .robot-head { opacity: 1 !important; transform: none !important; }
   }
 </style>
