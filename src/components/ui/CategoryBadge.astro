@@ -1,0 +1,80 @@
+---
+interface Props {
+  category: 'ai' | 'geo';
+  size?: 'sm' | 'md';
+}
+
+const { category, size = 'md' } = Astro.props;
+
+const labels: Record<string, string> = {
+  ai: 'AI',
+  geo: 'GEO',
+};
+
+const hrefs: Record<string, string> = {
+  ai: '/ai/',
+  geo: '/geo/',
+};
+
+const icons: Record<string, string> = {
+  ai: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+    <path d="M2 17l10 5 10-5"></path>
+    <path d="M2 12l10 5 10-5"></path>
+  </svg>`,
+  geo: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="2" y1="12" x2="22" y2="12"></line>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+  </svg>`,
+};
+---
+
+<a
+  href={hrefs[category]}
+  class={`category-badge ${category} ${size}`}
+  set:html={`${icons[category]}<span>${labels[category]}</span>`}
+/>
+
+<style>
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: opacity var(--duration) var(--ease);
+  }
+
+  .category-badge:hover {
+    opacity: 0.8;
+  }
+
+  /* Sizes */
+  .category-badge.md {
+    font-size: 0.6875rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .category-badge.sm {
+    font-size: 0.625rem;
+    padding: 0.2rem 0.55rem;
+  }
+
+  /* Category colors */
+  .category-badge.ai {
+    background: rgba(174, 211, 1, 0.12);
+    color: var(--cat-ai);
+    border: 1px solid rgba(174, 211, 1, 0.25);
+  }
+
+  .category-badge.geo {
+    background: rgba(1, 211, 174, 0.1);
+    color: var(--cat-geo);
+    border: 1px solid rgba(1, 211, 174, 0.2);
+  }
+</style>

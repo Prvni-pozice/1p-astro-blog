@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import FeaturedPosts from '../components/home/FeaturedPosts.astro';
+import YouTubeSection from '../components/home/YouTubeSection.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) =>
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const latestPosts = sortedPosts.slice(0, 8);
+---
+
+<BaseLayout
+  title="Blog o AI, SEO a GEO | První pozice"
+  description="Blog o umělé inteligenci, SEO a Generative Engine Optimization od týmu První pozice. Praktické znalosti pro firmy v AI-first světě."
+>
+  <!-- Schema: WebSite -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "První pozice Blog",
+    "url": "https://blog.prvni-pozice.com",
+    "description": "Blog o AI, SEO a GEO optimalizaci",
+    "publisher": {
+      "@type": "Organization",
+      "name": "První pozice",
+      "url": "https://www.prvni-pozice.com"
+    }
+  })} />
+
+  <Hero />
+  <FeaturedPosts posts={latestPosts} />
+  <YouTubeSection />
+</BaseLayout>

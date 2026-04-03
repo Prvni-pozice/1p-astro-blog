@@ -1,0 +1,254 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) =>
+  !data.draft && data.category === 'ai'
+);
+const posts = allPosts.sort((a, b) =>
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="AI — Umělá inteligence a vyhledávání"
+  description="Články o umělé inteligenci, AI nástrojích pro SEO, GEO a budoucnosti vyhledávání. Praktické průvodce od expertů První pozice."
+>
+  <!-- Category page hero -->
+  <div class="cat-hero">
+    <div class="cat-hero-glow" aria-hidden="true"></div>
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Blog</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">AI</span>
+      </nav>
+
+      <div class="cat-header">
+        <div class="cat-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <div class="cat-badge">AI</div>
+        <h1>Umělá inteligence</h1>
+        <p class="cat-lead">
+          Vše o AI a jeho dopadu na vyhledávání, marketing a váš byznys.
+          Nástroje, strategie a trendy, které potřebujete znát.
+        </p>
+        <div class="cat-meta">
+          <span class="post-count">{posts.length} {posts.length === 1 ? 'článek' : posts.length < 5 ? 'články' : 'článků'}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts grid -->
+  <div class="cat-posts section">
+    <div class="container">
+      {posts.length > 0 ? (
+        <div class="posts-grid">
+          {posts.map((post, i) => (
+            <div class="reveal" style={`transition-delay: ${i * 0.06}s`}>
+              <BlogCard post={post} featured={post.data.featured} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="no-posts">Brzy přibudou první články. Sledujte nás!</p>
+      )}
+    </div>
+  </div>
+
+  <!-- Future subcategories placeholder -->
+  <div class="cat-subcategories">
+    <div class="container">
+      <div class="subcategories-inner reveal">
+        <h2 class="sub-title">Podkategorie <span class="badge-soon">Brzy</span></h2>
+        <p class="sub-desc">
+          Sekce AI se bude dále rozšiřovat o specializované podkategorie:
+          nástroje, strategie, case studies a další.
+        </p>
+        <div class="sub-grid">
+          {['AI nástroje', 'LLM & RAG', 'AI Overviews', 'Automatizace'].map(sub => (
+            <div class="sub-card">
+              <span class="sub-dot" aria-hidden="true"></span>
+              {sub}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ── Category hero ── */
+  .cat-hero {
+    position: relative;
+    padding-top: calc(80px + 3rem);
+    padding-bottom: 3rem;
+    overflow: hidden;
+  }
+
+  .cat-hero-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(174, 211, 1, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cat-hero .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .breadcrumb a:hover { color: var(--accent); }
+
+  /* Category header */
+  .cat-header {
+    max-width: 680px;
+  }
+
+  .cat-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(174, 211, 1, 0.1);
+    border: 1px solid rgba(174, 211, 1, 0.2);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .cat-badge {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cat-ai);
+    background: rgba(174, 211, 1, 0.1);
+    border: 1px solid rgba(174, 211, 1, 0.2);
+    border-radius: 100px;
+    padding: 0.25rem 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cat-header h1 {
+    margin-bottom: 0.75rem;
+  }
+
+  .cat-lead {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: none;
+    margin-bottom: 1rem;
+  }
+
+  .cat-meta {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+
+  /* Posts */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 1.25rem;
+  }
+
+  .no-posts {
+    color: var(--text-muted);
+    padding: 3rem 0;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  /* Subcategories */
+  .cat-subcategories {
+    padding-bottom: 5rem;
+  }
+
+  .subcategories-inner {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+  }
+
+  .sub-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .badge-soon {
+    font-size: 0.6875rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 100px;
+    padding: 0.2rem 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: var(--font-sans);
+  }
+
+  .sub-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    max-width: none;
+  }
+
+  .sub-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .sub-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .sub-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+</style>

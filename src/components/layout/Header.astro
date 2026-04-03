@@ -1,0 +1,339 @@
+---
+const navItems = [
+  { label: 'Úvod', href: '/' },
+  { label: 'AI', href: '/ai/' },
+  { label: 'GEO', href: '/geo/' },
+];
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header" id="site-header">
+  <div class="header-inner container">
+    <!-- Logo -->
+    <a href="/" class="logo" aria-label="První pozice Blog – zpět na úvod">
+      <span class="logo-mark" aria-hidden="true">1P</span>
+      <span class="logo-text">
+        <span class="logo-brand">První pozice</span>
+        <span class="logo-sub">Blog</span>
+      </span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="nav-desktop" aria-label="Hlavní navigace">
+      <ul role="list">
+        {navItems.map(item => (
+          <li>
+            <a
+              href={item.href}
+              class={isActive(item.href) ? 'nav-link active' : 'nav-link'}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- CTA -->
+    <a
+      href="https://www.prvni-pozice.com"
+      class="header-cta"
+      target="_blank"
+      rel="noopener"
+    >
+      Hlavní web →
+    </a>
+
+    <!-- Mobile menu button -->
+    <button
+      class="menu-toggle"
+      id="menu-toggle"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      aria-label="Otevřít navigaci"
+    >
+      <span class="menu-bar" aria-hidden="true"></span>
+      <span class="menu-bar" aria-hidden="true"></span>
+      <span class="menu-bar" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Nav -->
+  <nav class="nav-mobile" id="mobile-nav" aria-label="Mobilní navigace" aria-hidden="true">
+    <ul role="list">
+      {navItems.map(item => (
+        <li>
+          <a
+            href={item.href}
+            class={isActive(item.href) ? 'nav-link active' : 'nav-link'}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href="https://www.prvni-pozice.com" class="nav-link" target="_blank" rel="noopener">
+          Hlavní web →
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const header = document.getElementById('site-header')!;
+  const toggle = document.getElementById('menu-toggle')!;
+  const mobileNav = document.getElementById('mobile-nav')!;
+
+  // Scroll effect
+  let lastY = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y > 60) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+    if (y > 200 && y > lastY) {
+      header.classList.add('hidden');
+    } else {
+      header.classList.remove('hidden');
+    }
+    lastY = y;
+  }, { passive: true });
+
+  // Mobile menu
+  toggle.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    mobileNav.setAttribute('aria-hidden', String(isOpen));
+    toggle.classList.toggle('open', !isOpen);
+    mobileNav.classList.toggle('open', !isOpen);
+    document.body.classList.toggle('nav-open', !isOpen);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg-nav);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration) var(--ease), transform 0.4s var(--ease);
+  }
+
+  .site-header.scrolled {
+    border-bottom-color: var(--border);
+  }
+
+  .site-header.hidden {
+    transform: translateY(-100%);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 72px;
+  }
+
+  /* ── Logo ── */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    color: #08080d;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    letter-spacing: -0.02em;
+    transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+  }
+
+  .logo:hover .logo-mark {
+    transform: scale(1.05);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .logo-brand {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--text-heading);
+  }
+
+  .logo-sub {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Desktop nav ── */
+  .nav-desktop {
+    flex: 1;
+  }
+
+  .nav-desktop ul {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color var(--duration) var(--ease), background var(--duration) var(--ease);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 1px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s var(--ease);
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .nav-link.active {
+    color: var(--accent);
+  }
+
+  .nav-link.active::after {
+    transform: scaleX(1);
+  }
+
+  /* ── CTA ── */
+  .header-cta {
+    flex-shrink: 0;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--border-accent);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+  }
+
+  .header-cta:hover {
+    background: var(--accent);
+    color: #08080d;
+    border-color: var(--accent);
+  }
+
+  /* ── Mobile toggle ── */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: auto;
+  }
+
+  .menu-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 1px;
+    transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  }
+
+  .menu-toggle.open .menu-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .menu-toggle.open .menu-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.open .menu-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ── Mobile nav ── */
+  .nav-mobile {
+    display: none;
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-mobile ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .nav-mobile .nav-link {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .nav-desktop { display: none; }
+    .header-cta { display: none; }
+    .menu-toggle { display: flex; }
+    .nav-mobile.open { display: block; }
+  }
+
+  :global(body.nav-open) {
+    overflow: hidden;
+  }
+</style>
