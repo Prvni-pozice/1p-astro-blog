@@ -53,7 +53,7 @@ function initCrowdObserver() {
   if (rm) { crowd.classList.add('is-active'); return; }
   const obs = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) { crowd.classList.add('is-active'); obs.disconnect(); }
-  }, { threshold: 0.3 });
+  }, { threshold: 0.9 });
   obs.observe(crowd);
 }
 
