@@ -17,7 +17,14 @@ function isActive(href: string) {
   <div class="header-inner container">
     <!-- Logo -->
     <a href="/" class="logo" aria-label="První pozice Blog – zpět na úvod">
-      <span class="logo-mark" aria-hidden="true">1P</span>
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 50 1220 1640" xmlns="http://www.w3.org/2000/svg" fill="white" width="100%" height="100%">
+          <!-- P tvar -->
+          <path d="M998 861l207 358 -223 129 -523 -906c-18,-31 -23,-64 -13,-99 9,-34 30,-61 61,-79l341 -197c88,-51 191,-85 293,-57 103,29 175,110 227,199 50,89 83,189 60,291 -23,100 -99,170 -185,219l-245 142zm-271 -469l157 272 193 -111c38,-22 79,-54 92,-97 14,-43 -4,-89 -25,-126 -21,-35 -50,-72 -92,-83 -41,-11 -85,6 -121,26l-204 119z"/>
+          <!-- 1 tvar (nakloněný) -->
+          <path d="M791 1693l239 -138 -619 -1073c-20,-34 -49,-56 -86,-65l0 0c-38,-10 -74,-4 -109,16l0 0 -69 40c23,88 17,165 -18,230l0 0c-35,65 -78,112 -129,142l0 0 100 173 226 -130 465 805z"/>
+        </svg>
+      </span>
       <span class="logo-text">
         <span class="logo-brand">První pozice</span>
         <span class="logo-sub">Blog</span>
@@ -166,12 +173,9 @@ function isActive(href: string) {
     width: 36px;
     height: 36px;
     background: var(--accent);
-    color: #08080d;
-    font-family: var(--font-sans);
-    font-weight: 700;
-    font-size: 0.875rem;
     border-radius: 8px;
-    letter-spacing: -0.02em;
+    padding: 5px;
+    flex-shrink: 0;
     transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
   }
 

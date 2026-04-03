@@ -52,7 +52,11 @@ function initCrowdObserver() {
   if (!crowd) return;
   if (rm) { crowd.classList.add('is-active'); return; }
   const obs = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) { crowd.classList.add('is-active'); obs.disconnect(); }
+    if (entries[0].isIntersecting) {
+      crowd.classList.add('is-active');
+    } else {
+      crowd.classList.remove('is-active');
+    }
   }, { threshold: 0.9 });
   obs.observe(crowd);
 }
