@@ -321,3 +321,89 @@ img {
     scroll-behavior: auto;
   }
 }
+
+/* ============================================================
+   Scroll Reveal
+   ============================================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Staggered children */
+[data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 600ms var(--ease), transform 600ms var(--ease);
+}
+[data-reveal-stagger].is-visible > *:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(2) { transition-delay: 100ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(3) { transition-delay: 200ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(4) { transition-delay: 300ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(5) { transition-delay: 400ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(6) { transition-delay: 500ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(7) { transition-delay: 600ms; opacity: 1; transform: none; }
+[data-reveal-stagger].is-visible > *:nth-child(8) { transition-delay: 700ms; opacity: 1; transform: none; }
+
+/* ============================================================
+   Light sweep na kartách
+   ============================================================ */
+.blog-card, .article-card, [class*="-card"] {
+  position: relative;
+  overflow: hidden;
+}
+.blog-card::after, .article-card::after, [class*="-card"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+  background-size: 200% 100%;
+  background-position: -100% 0;
+  transition: background-position 0.5s ease;
+  pointer-events: none;
+}
+.blog-card:hover::after, .article-card:hover::after, [class*="-card"]:hover::after {
+  background-position: 100% 0;
+}
+
+/* ============================================================
+   Breathing glow na CTA tlačítkách
+   ============================================================ */
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(174, 211, 1, 0.1); }
+  50%       { box-shadow: 0 0 20px 4px rgba(174, 211, 1, 0.25); }
+}
+.btn-primary {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* ============================================================
+   Parallax – dekorativní prvky
+   ============================================================ */
+.parallax-slow {
+  transform: translateY(calc(var(--scroll-y, 0) * 0.05px));
+  will-change: transform;
+}
+.parallax-medium {
+  transform: translateY(calc(var(--scroll-y, 0) * -0.03px));
+  will-change: transform;
+}
+
+/* ============================================================
+   Reduced motion overrides
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], [data-reveal-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .btn-primary {
+    animation: none !important;
+  }
+}
