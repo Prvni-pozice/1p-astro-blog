@@ -141,8 +141,8 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
               </div>
               <h3>Potřebujete GEO nebo SEO audit?</h3>
               <p>Zjistěte, jak si váš web stojí v AI vyhledávačích.</p>
-              <a href="https://www.prvni-pozice.com" class="btn-accent" target="_blank" rel="noopener">
-                Kontaktovat nás →
+              <a href="https://www.prvni-pozice.com/cs/14-kontakt/" class="btn-accent" target="_blank" rel="noopener">
+                Kontaktujte nás →
               </a>
             </div>
 
@@ -326,11 +326,40 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     gap: 1.5rem;
   }
 
+  /* ── Sidebar entrance animations ── */
+  @keyframes sidebarIn {
+    from { opacity: 0; transform: translateX(18px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @media (min-width: 1024px) {
+    .sidebar-sticky > * {
+      animation: sidebarIn 0.45s var(--ease) both;
+    }
+    .sidebar-sticky > *:nth-child(1) { animation-delay: 0.15s; }
+    .sidebar-sticky > *:nth-child(2) { animation-delay: 0.25s; }
+    .sidebar-sticky > *:nth-child(3) { animation-delay: 0.35s; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-sticky > * { animation: none !important; }
+  }
+
   .sidebar-cta {
     background: var(--bg-card);
     border: 1px solid var(--border-accent);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
+    transition:
+      border-color 0.25s var(--ease),
+      transform    0.25s var(--ease),
+      box-shadow   0.25s var(--ease);
+  }
+
+  .sidebar-cta:hover {
+    border-color: rgba(174, 211, 1, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(174, 211, 1, 0.08);
   }
 
   .sidebar-cta-icon {
@@ -399,6 +428,16 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem;
+    transition:
+      border-color 0.25s var(--ease),
+      transform    0.25s var(--ease),
+      box-shadow   0.25s var(--ease);
+  }
+
+  .sidebar-tags:hover {
+    border-color: rgba(174, 211, 1, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(174, 211, 1, 0.06);
   }
 
   .sidebar-youtube {
@@ -406,6 +445,16 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem;
+    transition:
+      border-color 0.25s var(--ease),
+      transform    0.25s var(--ease),
+      box-shadow   0.25s var(--ease);
+  }
+
+  .sidebar-youtube:hover {
+    border-color: rgba(255, 68, 68, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.07);
   }
 
   .youtube-link {

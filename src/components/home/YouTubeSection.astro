@@ -1,35 +1,81 @@
 ---
-// Static YouTube section — no iframe, no API calls, no performance impact
-// Click opens YouTube channel in new tab
+// YouTubeSection — build-time RSS fetch ze YouTube kanálu
+// Potřebuje: nastavit YOUTUBE_CHANNEL_ID jako env var v Vercel
+// Channel ID zjistíš na: youtube.com/@prvnipozice → Sdílet → Kopírovat ID kanálu
+// Formát: UCxxxxxxxxxxxxxxxxxxxxxxxxx (24 znaků)
 
-const videos = [
-  {
-    id: 'placeholder-1',
-    title: 'Co je GEO a jak funguje v roce 2026',
-    views: '2.4K',
-    date: 'Březen 2026',
-  },
-  {
-    id: 'placeholder-2',
-    title: 'AI nástroje pro SEO: přehled nástrojů',
-    views: '1.8K',
-    date: 'Únor 2026',
-  },
-  {
-    id: 'placeholder-3',
-    title: 'Schema markup krok za krokem',
-    views: '3.1K',
-    date: 'Leden 2026',
-  },
+const CHANNEL_ID = import.meta.env.YOUTUBE_CHANNEL_ID ?? '';
+const channelUrl = 'https://www.youtube.com/@prvnipozice';
+
+// Ruční seznam Shorts (YouTube API k automatické detekci není k dispozici)
+// Aktualizuj video ID níže (najdeš je v URL: youtube.com/shorts/VIDEO_ID)
+const manualShorts: { id: string; title: string }[] = [
+  // { id: 'xxxxxxxxxx', title: 'Název shortu 1' },
+  // { id: 'xxxxxxxxxx', title: 'Název shortu 2' },
+  // { id: 'xxxxxxxxxx', title: 'Název shortu 3' },
 ];
 
-const channelUrl = 'https://www.youtube.com/@prvnipozice';
+interface VideoItem {
+  id: string;
+  title: string;
+  published: string;
+  thumbnail: string;
+  url: string;
+}
+
+let videos: VideoItem[] = [];
+let fetchFailed = false;
+
+if (CHANNEL_ID) {
+  try {
+    const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+    const res = await fetch(rssUrl, { signal: AbortSignal.timeout(6000) });
+    if (res.ok) {
+      const xml = await res.text();
+      // Parsujeme YouTube RSS — předvídatelná struktura, bez externích závislostí
+      const entries = xml.match(/<entry>([\s\S]*?)<\/entry>/g) ?? [];
+      videos = entries.slice(0, 3).map((entry) => {
+        const videoId = (entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) ?? [])[1] ?? '';
+        const title   = (entry.match(/<title>([^<]+)<\/title>/)            ?? [])[1] ?? '';
+        const pub     = (entry.match(/<published>([^<]+)<\/published>/)     ?? [])[1] ?? '';
+        const date    = pub ? new Date(pub).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        return {
+          id: videoId,
+          title: title.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"'),
+          published: date,
+          thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          url: `https://www.youtube.com/watch?v=${videoId}`,
+        };
+      });
+    }
+  } catch {
+    fetchFailed = true;
+  }
+}
+
+// Fallback — statická data pokud channel ID není nastaveno nebo RSS selže
+if (videos.length === 0) {
+  fetchFailed = true;
+  videos = [
+    { id: '', title: 'Co je GEO a jak funguje v roce 2026',     published: 'Březen 2026', thumbnail: '', url: channelUrl },
+    { id: '', title: 'AI nástroje pro SEO: přehled nástrojů',   published: 'Únor 2026',  thumbnail: '', url: channelUrl },
+    { id: '', title: 'Schema markup krok za krokem',             published: 'Leden 2026', thumbnail: '', url: channelUrl },
+  ];
+}
+
+const shorts: VideoItem[] = manualShorts.map(s => ({
+  id: s.id,
+  title: s.title,
+  published: '',
+  thumbnail: `https://i.ytimg.com/vi/${s.id}/hqdefault.jpg`,
+  url: `https://www.youtube.com/shorts/${s.id}`,
+}));
 ---
 
 <section class="yt-section section" aria-labelledby="yt-heading">
   <div class="container">
     <div class="yt-inner reveal">
-      <!-- Section label -->
+
       <div class="yt-header">
         <div class="yt-label">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="yt-icon" aria-hidden="true">
@@ -46,32 +92,41 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
         </p>
       </div>
 
-      <!-- Video previews (static, click to YouTube) -->
+      <!-- Poslední videa -->
+      <div class="yt-row-label">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Nejnovější videa
+      </div>
       <div class="yt-videos">
         {videos.map((video, i) => (
           <a
-            href={channelUrl}
+            href={video.url}
             target="_blank"
             rel="noopener"
             class="yt-card"
-            aria-label={`${video.title} — přejít na YouTube kanál`}
+            aria-label={video.title}
             style={`animation-delay: ${i * 0.1}s`}
           >
-            <!-- Thumbnail placeholder -->
             <div class="yt-thumb" aria-hidden="true">
-              <div class="yt-thumb-bg"></div>
-              <div class="yt-play">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
-              <div class="yt-network-mini" aria-hidden="true">
-                <svg viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+              {video.thumbnail ? (
+                <img
+                  src={video.thumbnail}
+                  alt=""
+                  class="yt-thumb-img"
+                  loading="lazy"
+                  decoding="async"
+                  width="480"
+                  height="360"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+                />
+              ) : null}
+              <div class="yt-thumb-fallback" style={video.thumbnail ? 'display:none' : ''} aria-hidden="true">
+                <svg viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg" width="80" height="60">
                   <g stroke="rgba(174,211,1,0.25)" stroke-width="1" fill="none">
-                    <line x1="40" y1="30" x2="15" y2="15"/>
-                    <line x1="40" y1="30" x2="65" y2="15"/>
-                    <line x1="40" y1="30" x2="15" y2="45"/>
-                    <line x1="40" y1="30" x2="65" y2="45"/>
+                    <line x1="40" y1="30" x2="15" y2="15"/><line x1="40" y1="30" x2="65" y2="15"/>
+                    <line x1="40" y1="30" x2="15" y2="45"/><line x1="40" y1="30" x2="65" y2="45"/>
                   </g>
                   <circle cx="40" cy="30" r="5" fill="rgba(174,211,1,0.6)"/>
                   <circle cx="15" cy="15" r="3" fill="rgba(174,211,1,0.3)"/>
@@ -80,27 +135,69 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
                   <circle cx="65" cy="45" r="3" fill="rgba(174,211,1,0.3)"/>
                 </svg>
               </div>
+              <div class="yt-play">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
             </div>
             <div class="yt-card-body">
               <p class="yt-card-title">{video.title}</p>
-              <div class="yt-card-meta">
-                <span>{video.views} zhlédnutí</span>
-                <span>·</span>
-                <span>{video.date}</span>
-              </div>
+              {video.published && (
+                <div class="yt-card-meta">
+                  <span>{video.published}</span>
+                </div>
+              )}
             </div>
           </a>
         ))}
       </div>
 
+      <!-- Shorts (pouze pokud jsou manuálně nastaveny) -->
+      {shorts.length > 0 && (
+        <>
+          <div class="yt-row-label yt-row-label--shorts">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-6.62L6 6.94a3.74 3.74 0 0 0 .23 7l1.2.49L6 14.94a3.74 3.74 0 0 0 3.5 6.62l8.5-4.5a3.74 3.74 0 0 0-.23-6.74z"/>
+            </svg>
+            Shorts
+          </div>
+          <div class="yt-shorts">
+            {shorts.map((s, i) => (
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener"
+                class="yt-short-card"
+                aria-label={s.title}
+                style={`animation-delay: ${i * 0.1}s`}
+              >
+                <div class="yt-short-thumb">
+                  <img
+                    src={s.thumbnail}
+                    alt=""
+                    class="yt-thumb-img"
+                    loading="lazy"
+                    decoding="async"
+                    width="360"
+                    height="640"
+                  />
+                  <div class="yt-play yt-play--small">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                  </div>
+                </div>
+                <p class="yt-short-title">{s.title}</p>
+              </a>
+            ))}
+          </div>
+        </>
+      )}
+
       <!-- CTA -->
       <div class="yt-cta">
-        <a
-          href={channelUrl}
-          target="_blank"
-          rel="noopener"
-          class="yt-btn"
-        >
+        <a href={channelUrl} target="_blank" rel="noopener" class="yt-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
           </svg>
@@ -125,22 +222,19 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     overflow: hidden;
   }
 
-  /* Ambient glow */
   .yt-inner::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: 50%;
+    top: -50%; left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    height: 100%;
+    width: 80%; height: 100%;
     background: radial-gradient(ellipse, rgba(255, 68, 68, 0.05) 0%, transparent 70%);
     pointer-events: none;
   }
 
   .yt-header {
     max-width: 600px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     position: relative;
   }
 
@@ -156,9 +250,7 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     letter-spacing: 0.04em;
   }
 
-  .yt-icon {
-    flex-shrink: 0;
-  }
+  .yt-icon { flex-shrink: 0; }
 
   .yt-title {
     margin-bottom: 0.75rem;
@@ -169,6 +261,25 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     color: var(--text-muted);
     font-size: 0.9375rem;
     max-width: none;
+  }
+
+  /* Row labels */
+  .yt-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.75rem;
+  }
+
+  .yt-row-label--shorts {
+    margin-top: 2rem;
+    color: #ff4444;
   }
 
   /* ── Video cards ── */
@@ -191,12 +302,14 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     border: 1px solid var(--border);
     transition:
       border-color var(--duration) var(--ease),
-      transform var(--duration) var(--ease);
+      transform    var(--duration) var(--ease),
+      box-shadow   var(--duration) var(--ease);
   }
 
   .yt-card:hover {
-    border-color: rgba(255, 68, 68, 0.3);
-    transform: translateY(-2px);
+    border-color: rgba(255, 68, 68, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(255, 68, 68, 0.1);
   }
 
   .yt-card:hover .yt-play {
@@ -212,31 +325,35 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     overflow: hidden;
   }
 
-  .yt-thumb-bg {
+  .yt-thumb-img {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 30%, rgba(174, 211, 1, 0.06) 0%, transparent 70%);
-  }
-
-  .yt-network-mini {
-    position: absolute;
-    inset: 0;
-    padding: 0.5rem;
-  }
-
-  .yt-network-mini svg {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .yt-card:hover .yt-thumb-img {
+    transform: scale(1.04);
+  }
+
+  .yt-thumb-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 50% 30%, rgba(174, 211, 1, 0.06) 0%, transparent 70%);
   }
 
   .yt-play {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 68, 68, 0.8);
+    width: 40px; height: 40px;
+    background: rgba(255, 68, 68, 0.85);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -244,8 +361,12 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     color: white;
     transition:
       background var(--duration) var(--ease),
-      transform var(--duration) var(--ease);
+      transform  var(--duration) var(--ease);
     backdrop-filter: blur(4px);
+  }
+
+  .yt-play--small {
+    width: 30px; height: 30px;
   }
 
   /* Card body */
@@ -276,6 +397,67 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     color: var(--text-dim);
   }
 
+  /* ── Shorts ── */
+  .yt-shorts {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .yt-short-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    width: clamp(90px, 14vw, 130px);
+    transition:
+      transform var(--duration) var(--ease);
+  }
+
+  .yt-short-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .yt-short-card:hover .yt-play {
+    background: #ff4444;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .yt-short-thumb {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .yt-short-card:hover .yt-short-thumb {
+    border-color: rgba(255, 68, 68, 0.35);
+  }
+
+  .yt-short-thumb .yt-thumb-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .yt-short-title {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   /* ── CTA ── */
   .yt-cta {
     display: flex;
@@ -296,9 +478,9 @@ const channelUrl = 'https://www.youtube.com/@prvnipozice';
     border-radius: 100px;
     text-decoration: none;
     transition:
-      background var(--duration) var(--ease),
-      transform var(--duration) var(--ease),
-      box-shadow var(--duration) var(--ease);
+      background   var(--duration) var(--ease),
+      transform    var(--duration) var(--ease),
+      box-shadow   var(--duration) var(--ease);
   }
 
   .yt-btn:hover {
