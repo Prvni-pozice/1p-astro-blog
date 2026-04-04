@@ -71,10 +71,34 @@ function initHeroController() {
   const botLight = document.getElementById('botLight');
   const eyeL     = document.getElementById('botEyeL');
   const eyeR     = document.getElementById('botEyeR');
+  const coneL    = document.getElementById('botConeL');
+  const coneR    = document.getElementById('botConeR');
   const root     = document.documentElement;
 
-  let heroH = hero.offsetHeight;
+  let heroH  = hero.offsetHeight;
   let rafPending = false;
+  let curCx  = 0; // aktuální cursor x offset (−1..1)
+
+  /* Výchozí souřadnice kuželů — bod oka a výchozí endpoint (směr na klávesnici Macu) */
+  const CONE = {
+    eyeLx: 148, eyeLy: 165,
+    eyeRx: 222, eyeRy: 165,
+    baseX: -60,   // výchozí střed endpointu (doleva = klávesnice Macu)
+    baseY: 820,   // výchozí y endpointu
+    spread: 80,   // polovina šířky kužele v endpointu
+    gap: 80,      // posun pravého kužele od levého
+  };
+
+  function updateCones(cx, scrollP) {
+    if (!coneL || !coneR) return;
+    const ex = CONE.baseX + cx * 120;          // ±120px dle cursoru
+    const ey = CONE.baseY + scrollP * 140;     // o 140px dolů při plném scrollu
+    const s  = CONE.spread;
+    coneL.setAttribute('d',
+      `M ${CONE.eyeLx} ${CONE.eyeLy} L ${(ex - s).toFixed(0)} ${ey.toFixed(0)} L ${(ex + s).toFixed(0)} ${ey.toFixed(0)} Z`);
+    coneR.setAttribute('d',
+      `M ${CONE.eyeRx} ${CONE.eyeRy} L ${(ex + CONE.gap - s).toFixed(0)} ${ey.toFixed(0)} L ${(ex + CONE.gap + s).toFixed(0)} ${ey.toFixed(0)} Z`);
+  }
 
   /* Scroll parallax — robot a mac se pohybují různou rychlostí (hloubka) */
   function applyScrollPhase() {
@@ -84,6 +108,9 @@ function initHeroController() {
     // Parallax: robot rychleji (blíž), mac pomaleji (dál)
     root.style.setProperty('--bot-parallax', `${-(sy * 0.13).toFixed(1)}px`);
     root.style.setProperty('--mac-parallax', `${-(sy * 0.06).toFixed(1)}px`);
+
+    // Kužele se při scrollu naklánějí více dolů
+    updateCones(curCx, p);
 
     // Fade-out při hlubokém scrollu
     if (heroBot) heroBot.style.opacity = p > 0.72 ? String(Math.max(0, 1 - (p - 0.72) / 0.28).toFixed(3)) : '';
@@ -99,10 +126,12 @@ function initHeroController() {
     }, { passive: true });
     window.addEventListener('resize', () => { heroH = hero.offsetHeight; }, { passive: true });
     applyScrollPhase();
+    updateCones(0, 0); // inicializace — kužele na klávesnici Macu
   }
 
-  /* Sdílená logika pro pohyb očí + light za kurzorem/dotykem */
+  /* Sdílená logika pro pohyb očí + light + kuželů za kurzorem/dotykem */
   function applyPointer(cx, cy) {
+    curCx = cx;
     // Robot — jemná 3D rotace
     root.style.setProperty('--head-ry', `${(cx * 8).toFixed(2)}deg`);
     root.style.setProperty('--head-rx', `${(cy * -5).toFixed(2)}deg`);
@@ -113,6 +142,10 @@ function initHeroController() {
     if (eyeL) eyeL.style.transform = `translate(calc(-50% + ${ex}%), calc(-50% + ${ey}%))`;
     if (eyeR) eyeR.style.transform = `translate(calc(-50% + ${ex}%), calc(-50% + ${ey}%))`;
 
+    // Kužele lehce sledují cursor
+    const p = Math.min(Math.max(window.scrollY / heroH, 0), 1);
+    updateCones(cx * 0.45, p);
+
     // Světelný odlesk na robotovi
     if (botLight) {
       botLight.style.background = `radial-gradient(350px circle at ${(50 + cx * 30).toFixed(1)}% ${(50 + cy * 20).toFixed(1)}%, rgba(1,211,174,0.08) 0%, transparent 65%)`;
@@ -120,10 +153,13 @@ function initHeroController() {
   }
 
   function resetPointer() {
+    curCx = 0;
     root.style.setProperty('--head-ry', '0deg');
     root.style.setProperty('--head-rx', '0deg');
     if (eyeL) eyeL.style.transform = '';
     if (eyeR) eyeR.style.transform = '';
+    const p = Math.min(Math.max(window.scrollY / heroH, 0), 1);
+    updateCones(0, p);
     if (botLight) botLight.style.background = '';
   }
 
