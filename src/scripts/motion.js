@@ -46,9 +46,9 @@ function initRevealObserver() {
   document.querySelectorAll('[data-reveal],[data-reveal-group],.reveal').forEach(el => obs.observe(el));
 }
 
-/* ── 3. Crowd Scrub: .crowd-parallax scroll-scrubbed video ── */
+/* ── 3. Crowd Scrub: .crowd-section scroll-scrubbed video ── */
 function initCrowdScrub() {
-  const section = document.querySelector('.crowd-parallax');
+  const section = document.querySelector('.crowd-section');
   const video   = /** @type {HTMLVideoElement|null} */ (section?.querySelector('.crowd-video'));
   if (!section || !video) return;
 
@@ -61,42 +61,34 @@ function initCrowdScrub() {
 
   let duration = 0;
 
-  /* Lazy preload: začni stahovat video 400px předtím než se sekce přiblíží */
+  /* Lazy preload: začni stahovat 400px předem */
   const preloadObs = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      video.preload = 'auto';
-      preloadObs.disconnect();
-    }
+    if (entries[0].isIntersecting) { video.preload = 'auto'; preloadObs.disconnect(); }
   }, { rootMargin: '400px 0px' });
   preloadObs.observe(section);
 
   video.addEventListener('loadedmetadata', () => { duration = video.duration; });
 
-  /* Mapuj scroll progress → video.currentTime */
+  /* Progress: 0 = spodní hrana sekce na spodní hraně viewportu (sekce vchází)
+               1 = horní hrana sekce na horní hraně viewportu (sekce odchází) */
   function updateScrub() {
     if (!duration) return;
-    const rect         = section.getBoundingClientRect();
-    const sectionH     = section.offsetHeight;
-    const vh           = window.innerHeight;
-    const scrollRange  = sectionH + vh;
-    const scrolled     = vh - rect.top;
-    const progress     = Math.max(0, Math.min(1, scrolled / scrollRange));
-
+    const rect    = section.getBoundingClientRect();
+    const sectionH = section.offsetHeight;
+    const vh       = window.innerHeight;
+    // rect.bottom jde od vh → 0 jak sekce prochází viewportem
+    const progress = Math.max(0, Math.min(1, (vh - rect.top) / (sectionH + vh)));
     video.currentTime = progress * duration;
     section.classList.toggle('scrub-complete', progress > 0.85);
   }
 
-  /* Spouštěj rAF loop jen když je sekce v blízkosti viewportu */
   let isVisible = false;
   const visObs = new IntersectionObserver((entries) => {
     isVisible = entries[0].isIntersecting;
   }, { rootMargin: '100px 0px' });
   visObs.observe(section);
 
-  function tick() {
-    if (isVisible) updateScrub();
-    requestAnimationFrame(tick);
-  }
+  function tick() { if (isVisible) updateScrub(); requestAnimationFrame(tick); }
   requestAnimationFrame(tick);
 }
 
