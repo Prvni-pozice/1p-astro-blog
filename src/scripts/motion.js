@@ -46,19 +46,58 @@ function initRevealObserver() {
   document.querySelectorAll('[data-reveal],[data-reveal-group],.reveal').forEach(el => obs.observe(el));
 }
 
-/* ── 3. Crowd Observer: [data-crowd-trigger] ── */
-function initCrowdObserver() {
-  const crowd = document.querySelector('[data-crowd-trigger]');
-  if (!crowd) return;
-  if (rm) { crowd.classList.add('is-active'); return; }
-  const obs = new IntersectionObserver((entries) => {
+/* ── 3. Crowd Scrub: .crowd-parallax scroll-scrubbed video ── */
+function initCrowdScrub() {
+  const section = document.querySelector('.crowd-parallax');
+  const video   = /** @type {HTMLVideoElement|null} */ (section?.querySelector('.crowd-video'));
+  if (!section || !video) return;
+
+  /* Reduced motion: zobraz poslední frame staticky */
+  if (rm) {
+    video.preload = 'auto';
+    video.addEventListener('loadedmetadata', () => { video.currentTime = video.duration; });
+    return;
+  }
+
+  let duration = 0;
+
+  /* Lazy preload: začni stahovat video 400px předtím než se sekce přiblíží */
+  const preloadObs = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
-      crowd.classList.add('is-active');
-    } else {
-      crowd.classList.remove('is-active');
+      video.preload = 'auto';
+      preloadObs.disconnect();
     }
-  }, { threshold: 0.9 });
-  obs.observe(crowd);
+  }, { rootMargin: '400px 0px' });
+  preloadObs.observe(section);
+
+  video.addEventListener('loadedmetadata', () => { duration = video.duration; });
+
+  /* Mapuj scroll progress → video.currentTime */
+  function updateScrub() {
+    if (!duration) return;
+    const rect         = section.getBoundingClientRect();
+    const sectionH     = section.offsetHeight;
+    const vh           = window.innerHeight;
+    const scrollRange  = sectionH + vh;
+    const scrolled     = vh - rect.top;
+    const progress     = Math.max(0, Math.min(1, scrolled / scrollRange));
+
+    video.currentTime = progress * duration;
+    section.classList.toggle('scrub-complete', progress > 0.85);
+  }
+
+  /* Spouštěj rAF loop jen když je sekce v blízkosti viewportu */
+  let isVisible = false;
+  const visObs = new IntersectionObserver((entries) => {
+    isVisible = entries[0].isIntersecting;
+  }, { rootMargin: '100px 0px' });
+  visObs.observe(section);
+
+  function tick() {
+    if (isVisible) updateScrub();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 /* ── 4. Hero Controller ── */
@@ -207,7 +246,7 @@ initScrollTracker();
 
 function boot() {
   initRevealObserver();
-  initCrowdObserver();
+  initCrowdScrub();
   initHeroController();
   initReadingProgress();
 }

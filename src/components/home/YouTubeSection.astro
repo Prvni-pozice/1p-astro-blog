@@ -44,7 +44,7 @@ try {
       .map(parseEntry)
       .filter(v => v.id);
     videos = all.filter(v => !v.isShort).slice(0, 3);
-    shorts = all.filter(v =>  v.isShort).slice(0, 3);
+    shorts = all.filter(v =>  v.isShort).slice(0, 6);
   }
 } catch {
   // tiché selhání → fallback níže
@@ -248,9 +248,17 @@ const videoCount = videos.length; // pro grid-template-columns
   }
 
   .yt-shorts {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.85rem;
+  }
+
+  @media (max-width: 960px) {
+    .yt-shorts { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    .yt-shorts { grid-template-columns: repeat(2, 1fr); }
   }
 
   .yt-short-card {
@@ -258,7 +266,6 @@ const videoCount = videos.length; // pro grid-template-columns
     flex-direction: column;
     gap: 0.5rem;
     text-decoration: none;
-    width: clamp(100px, 15vw, 140px);
     transition: transform var(--duration) var(--ease);
   }
 
