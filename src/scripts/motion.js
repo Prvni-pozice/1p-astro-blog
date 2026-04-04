@@ -71,33 +71,21 @@ function initHeroController() {
   const botLight = document.getElementById('botLight');
   const eyeL     = document.getElementById('botEyeL');
   const eyeR     = document.getElementById('botEyeR');
-  const coneL    = document.getElementById('botConeL');
-  const coneR    = document.getElementById('botConeR');
+  const botLasers = document.getElementById('botLasers');
   const root     = document.documentElement;
 
   let heroH  = hero.offsetHeight;
   let rafPending = false;
   let curCx  = 0; // aktuální cursor x offset (−1..1)
 
-  /* Výchozí souřadnice kuželů — bod oka a výchozí endpoint (směr na klávesnici Macu) */
-  const CONE = {
-    eyeLx: 148, eyeLy: 165,
-    eyeRx: 222, eyeRy: 165,
-    baseX: -60,   // výchozí střed endpointu (doleva = klávesnice Macu)
-    baseY: 820,   // výchozí y endpointu
-    spread: 80,   // polovina šířky kužele v endpointu
-    gap: 80,      // posun pravého kužele od levého
-  };
-
+  /* updateCones — CSS rotate na celém .bot-lasers SVG
+     -25°: kužele míří vlevo-nahoru (na horní část Mac displeje)
+     -5°:  kužele míří vlevo-dolů  (na klávesnici Macu) — při plném scrollu
+     cursor posunuje ±12°                                                      */
   function updateCones(cx, scrollP) {
-    if (!coneL || !coneR) return;
-    const ex = CONE.baseX + cx * 120;          // ±120px dle cursoru
-    const ey = CONE.baseY + scrollP * 140;     // o 140px dolů při plném scrollu
-    const s  = CONE.spread;
-    coneL.setAttribute('d',
-      `M ${CONE.eyeLx} ${CONE.eyeLy} L ${(ex - s).toFixed(0)} ${ey.toFixed(0)} L ${(ex + s).toFixed(0)} ${ey.toFixed(0)} Z`);
-    coneR.setAttribute('d',
-      `M ${CONE.eyeRx} ${CONE.eyeRy} L ${(ex + CONE.gap - s).toFixed(0)} ${ey.toFixed(0)} L ${(ex + CONE.gap + s).toFixed(0)} ${ey.toFixed(0)} Z`);
+    if (!botLasers) return;
+    const angle = -25 + scrollP * 20 + cx * 12;
+    botLasers.style.transform = `rotate(${angle.toFixed(1)}deg)`;
   }
 
   /* Scroll parallax — robot a mac se pohybují různou rychlostí (hloubka) */
