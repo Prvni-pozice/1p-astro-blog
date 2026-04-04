@@ -66,10 +66,12 @@ function initHeroController() {
   const hero    = document.getElementById('heroSection');
   if (!hero) return;
 
-  const heroBot = document.getElementById('heroBot');
-  const heroMac = document.getElementById('heroMac');
+  const heroBot  = document.getElementById('heroBot');
+  const heroMac  = document.getElementById('heroMac');
   const botLight = document.getElementById('botLight');
-  const root    = document.documentElement;
+  const eyeL     = document.getElementById('botEyeL');
+  const eyeR     = document.getElementById('botEyeR');
+  const root     = document.documentElement;
 
   let heroH = hero.offsetHeight;
   let rafPending = false;
@@ -99,33 +101,57 @@ function initHeroController() {
     applyScrollPhase();
   }
 
-  /* Mouse tracking — desktop only */
-  if (!rm && window.matchMedia('(min-width: 1000px)').matches) {
+  /* Sdílená logika pro pohyb očí + light za kurzorem/dotykem */
+  function applyPointer(cx, cy) {
+    // Robot — jemná 3D rotace
+    root.style.setProperty('--head-ry', `${(cx * 8).toFixed(2)}deg`);
+    root.style.setProperty('--head-rx', `${(cy * -5).toFixed(2)}deg`);
+
+    // Oči se posunou za kurzorem (malý rozsah ±3.5%)
+    const ex = (cx * 3.5).toFixed(2);
+    const ey = (cy * 2.5).toFixed(2);
+    if (eyeL) eyeL.style.transform = `translate(calc(-50% + ${ex}%), calc(-50% + ${ey}%))`;
+    if (eyeR) eyeR.style.transform = `translate(calc(-50% + ${ex}%), calc(-50% + ${ey}%))`;
+
+    // Světelný odlesk na robotovi
+    if (botLight) {
+      botLight.style.background = `radial-gradient(350px circle at ${(50 + cx * 30).toFixed(1)}% ${(50 + cy * 20).toFixed(1)}%, rgba(1,211,174,0.08) 0%, transparent 65%)`;
+    }
+  }
+
+  function resetPointer() {
+    root.style.setProperty('--head-ry', '0deg');
+    root.style.setProperty('--head-rx', '0deg');
+    if (eyeL) eyeL.style.transform = '';
+    if (eyeR) eyeR.style.transform = '';
+    if (botLight) botLight.style.background = '';
+  }
+
+  if (!rm) {
     let heroVisible = false;
     const visObs = new IntersectionObserver(entries => { heroVisible = entries[0].isIntersecting; });
     visObs.observe(hero);
 
+    /* Mouse — desktop */
     hero.addEventListener('mousemove', (e) => {
       if (!heroVisible) return;
       const rect = hero.getBoundingClientRect();
-      const cx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2; // -1..1
+      const cx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2;
       const cy = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
-
-      // Robot — jemná 3D rotace dle myši (celý robot se mírně natáčí)
-      root.style.setProperty('--head-ry', `${(cx * 8).toFixed(2)}deg`);
-      root.style.setProperty('--head-rx', `${(cy * -5).toFixed(2)}deg`);
-
-      // Dynamický světelný odlesk na robotovi
-      if (botLight) {
-        botLight.style.background = `radial-gradient(350px circle at ${(50 + cx * 30).toFixed(1)}% ${(50 + cy * 20).toFixed(1)}%, rgba(1,211,174,0.08) 0%, transparent 65%)`;
-      }
+      applyPointer(cx, cy);
     });
+    hero.addEventListener('mouseleave', resetPointer);
 
-    hero.addEventListener('mouseleave', () => {
-      root.style.setProperty('--head-ry', '0deg');
-      root.style.setProperty('--head-rx', '0deg');
-      if (botLight) botLight.style.background = '';
-    });
+    /* Touch — mobilní a dotykové notebooky */
+    hero.addEventListener('touchmove', (e) => {
+      if (!heroVisible) return;
+      const t = e.touches[0];
+      const rect = hero.getBoundingClientRect();
+      const cx = ((t.clientX - rect.left) / rect.width  - 0.5) * 2;
+      const cy = ((t.clientY - rect.top)  / rect.height - 0.5) * 2;
+      applyPointer(cx, cy);
+    }, { passive: true });
+    hero.addEventListener('touchend', resetPointer, { passive: true });
   }
 }
 

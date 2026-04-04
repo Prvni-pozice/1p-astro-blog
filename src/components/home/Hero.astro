@@ -96,9 +96,9 @@ import mac from '../../assets/hero/mac.png';
         fetchpriority="high"
         class="bot-img"
       />
-      <!-- Jemné oční záře -->
-      <div class="bot-eye bot-eye-l" aria-hidden="true"></div>
-      <div class="bot-eye bot-eye-r" aria-hidden="true"></div>
+      <!-- Jemné oční záře (pozice 28% a 42% zleva, pohybují se za kurzorem) -->
+      <div class="bot-eye bot-eye-l" id="botEyeL" aria-hidden="true"></div>
+      <div class="bot-eye bot-eye-r" id="botEyeR" aria-hidden="true"></div>
       <!-- Laser světelné kužely (SVG, velmi jemné) -->
       <svg class="bot-lasers" viewBox="0 0 528 749"
         preserveAspectRatio="xMidYMid meet"
@@ -115,12 +115,12 @@ import mac from '../../assets/hero/mac.png';
             <stop offset="100%" stop-color="#aed301" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        <!-- Levý kužel — vychází z levého oka, míří doleva-dolů -->
-        <path d="M 222 160 L 50 749 L 210 749 Z" fill="url(#coneGradL)">
+        <!-- Levý kužel — oko na 28% = 148px -->
+        <path d="M 148 165 L 0 749 L 160 749 Z" fill="url(#coneGradL)">
           <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" repeatCount="indefinite"/>
         </path>
-        <!-- Pravý kužel — vychází z pravého oka, míří dolů -->
-        <path d="M 308 160 L 190 749 L 360 749 Z" fill="url(#coneGradR)">
+        <!-- Pravý kužel — oko na 42% = 222px -->
+        <path d="M 222 165 L 80 749 L 260 749 Z" fill="url(#coneGradR)">
           <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" begin="0.9s" repeatCount="indefinite"/>
         </path>
       </svg>
@@ -269,8 +269,8 @@ import mac from '../../assets/hero/mac.png';
     animation: eyePulse 2.8s ease-in-out infinite;
     pointer-events: none;
   }
-  .bot-eye-l { left: 41%; top: 22%; }
-  .bot-eye-r { left: 59%; top: 22%; animation-delay: 0.5s; }
+  .bot-eye-l { left: 28%; top: 22%; }
+  .bot-eye-r { left: 42%; top: 22%; animation-delay: 0.5s; }
 
   @keyframes eyePulse {
     0%, 100% {
@@ -351,8 +351,8 @@ import mac from '../../assets/hero/mac.png';
     overflow: hidden;
     border-radius: 3px;
     background: rgba(5, 8, 15, 0.88);
-    /* Mírný 3D sklon odpovídající úhlu laptopu */
-    transform: perspective(1000px) rotateX(5deg);
+    /* 3D sklon odpovídající úhlu displeje laptopu (~8° dozadu, minimal Y) */
+    transform: perspective(900px) rotateX(8deg) rotateY(-1.5deg);
     pointer-events: none;
   }
 
