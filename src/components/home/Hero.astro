@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import macBot from '../../assets/hero/mac-bot.png';
+import bot from '../../assets/hero/bot.png';
+import mac from '../../assets/hero/mac.png';
 ---
 
 <section class="hero" id="heroSection" aria-label="Úvod">
@@ -12,120 +13,120 @@ import macBot from '../../assets/hero/mac-bot.png';
   </div>
   <div class="hero-dots" aria-hidden="true"></div>
 
-  <!-- Scene: robot + MacBook -->
-  <div class="hero-scene" id="heroScene" aria-hidden="true">
-
-    <!-- Layer 1: Robot tělo + laptop (plný obrázek) -->
-    <div class="scene-body" id="robotBody">
+  <!-- Mac laptop layer (za robotem, nižší z-index) -->
+  <div class="hero-mac" id="heroMac" aria-hidden="true">
+    <div class="mac-inner">
       <Image
-        src={macBot}
+        src={mac}
         alt=""
-        width={1200}
-        height={896}
+        width={932}
+        height={656}
+        format="webp"
+        quality={85}
+        loading="eager"
+        decoding="async"
+        class="mac-img"
+      />
+      <!-- Screen overlay — terminal text -->
+      <div class="mac-screen" id="macScreen">
+        <div class="screen-scanlines"></div>
+        <div class="screen-content-wrap">
+          <div class="screen-lines" id="screenLines">
+            <div class="sl">$ geo-scan --domain prvni-pozice.com</div>
+            <div class="sl sl-dim">▶ Initializing AI visibility check...</div>
+            <div class="sl">  GEO score <span class="sl-bar">████████████░░</span> 94/100</div>
+            <div class="sl sl-ok">  ChatGPT citations      ↑ 128%</div>
+            <div class="sl sl-ok">  Perplexity AI          found ✓</div>
+            <div class="sl sl-ok">  Google AI Overview     active ✓</div>
+            <div class="sl sl-ok">  Bing Copilot           indexed ✓</div>
+            <div class="sl sl-dim">▶ Entity analysis...</div>
+            <div class="sl">  Entity strength        <span class="sl-val">0.94</span></div>
+            <div class="sl sl-ok">  Schema: BlogPosting    VALID ✓</div>
+            <div class="sl sl-ok">  FAQ Schema             VALID ✓</div>
+            <div class="sl">  RAG signal             <span class="sl-hi">HIGH</span></div>
+            <div class="sl">  LLM training data      included</div>
+            <div class="sl sl-dim">▶ SEO cross-check...</div>
+            <div class="sl">  SERP position avg      <span class="sl-val">3.2</span></div>
+            <div class="sl sl-ok">  Core Web Vitals        PASS ✓</div>
+            <div class="sl">  Brand mentions/mo      <span class="sl-val">1,284</span></div>
+            <div class="sl sl-sep">  ──────────────────────────</div>
+            <div class="sl sl-ok">▶ GEO audit complete ✓</div>
+            <div class="sl sl-dim">  next scan in 24h...</div>
+            <!-- Seamless loop copy -->
+            <div class="sl">$ geo-scan --domain prvni-pozice.com</div>
+            <div class="sl sl-dim">▶ Initializing AI visibility check...</div>
+            <div class="sl">  GEO score <span class="sl-bar">████████████░░</span> 94/100</div>
+            <div class="sl sl-ok">  ChatGPT citations      ↑ 128%</div>
+            <div class="sl sl-ok">  Perplexity AI          found ✓</div>
+            <div class="sl sl-ok">  Google AI Overview     active ✓</div>
+            <div class="sl sl-ok">  Bing Copilot           indexed ✓</div>
+            <div class="sl sl-dim">▶ Entity analysis...</div>
+            <div class="sl">  Entity strength        <span class="sl-val">0.94</span></div>
+            <div class="sl sl-ok">  Schema: BlogPosting    VALID ✓</div>
+            <div class="sl sl-ok">  FAQ Schema             VALID ✓</div>
+            <div class="sl">  RAG signal             <span class="sl-hi">HIGH</span></div>
+            <div class="sl">  LLM training data      included</div>
+            <div class="sl sl-dim">▶ SEO cross-check...</div>
+            <div class="sl">  SERP position avg      <span class="sl-val">3.2</span></div>
+            <div class="sl sl-ok">  Core Web Vitals        PASS ✓</div>
+            <div class="sl">  Brand mentions/mo      <span class="sl-val">1,284</span></div>
+            <div class="sl sl-sep">  ──────────────────────────</div>
+            <div class="sl sl-ok">▶ GEO audit complete ✓</div>
+            <div class="sl sl-dim">  next scan in 24h...</div>
+          </div>
+        </div>
+      </div>
+      <!-- Odlesk displeje -->
+      <div class="mac-screen-glow" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Robot layer (vpředu, vyšší z-index) -->
+  <div class="hero-bot" id="heroBot" aria-hidden="true">
+    <div class="bot-inner">
+      <Image
+        src={bot}
+        alt=""
+        width={528}
+        height={749}
         format="webp"
         quality={85}
         loading="eager"
         decoding="async"
         fetchpriority="high"
-        class="scene-img"
+        class="bot-img"
       />
+      <!-- Jemné oční záře -->
+      <div class="bot-eye bot-eye-l" aria-hidden="true"></div>
+      <div class="bot-eye bot-eye-r" aria-hidden="true"></div>
+      <!-- Laser světelné kužely (SVG, velmi jemné) -->
+      <svg class="bot-lasers" viewBox="0 0 528 749"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="coneGradL" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#aed301" stop-opacity="0.18"/>
+            <stop offset="70%" stop-color="#aed301" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#aed301" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="coneGradR" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#aed301" stop-opacity="0.18"/>
+            <stop offset="70%" stop-color="#aed301" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#aed301" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Levý kužel — vychází z levého oka, míří doleva-dolů -->
+        <path d="M 222 160 L 50 749 L 210 749 Z" fill="url(#coneGradL)">
+          <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" repeatCount="indefinite"/>
+        </path>
+        <!-- Pravý kužel — vychází z pravého oka, míří dolů -->
+        <path d="M 308 160 L 190 749 L 360 749 Z" fill="url(#coneGradR)">
+          <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" begin="0.9s" repeatCount="indefinite"/>
+        </path>
+      </svg>
+      <!-- Kurzorem řízený světelný odlesk -->
+      <div class="bot-light" id="botLight" aria-hidden="true"></div>
     </div>
-
-    <!-- Layer 2: Robot hlava (stejný obrázek, clip-path na hlavu — sleduje kurzor)
-         Clip polygon odpovídá oblasti hlavy v obrázku 1344×768 -->
-    <div class="scene-head" id="robotHead">
-      <Image
-        src={macBot}
-        alt=""
-        width={1200}
-        height={896}
-        format="webp"
-        quality={85}
-        loading="eager"
-        decoding="async"
-        class="scene-img"
-      />
-    </div>
-
-    <!-- Layer 3: MacBook screen content overlay
-         Pozicováno přes laptop screen v obrázku (~7–50% x, ~22–80% y) -->
-    <div class="screen-overlay" id="screenOverlay" aria-hidden="true">
-      <div class="screen-scanlines"></div>
-      <div class="screen-content-wrap">
-        <div class="screen-lines" id="screenLines">
-          <!-- Obsah zopakován 2× pro plynulé smyčkování -->
-          <div class="sl">$ geo-scan --domain prvni-pozice.com</div>
-          <div class="sl sl-dim">▶ Initializing AI visibility check...</div>
-          <div class="sl">  GEO score <span class="sl-bar">████████████░░</span> 94/100</div>
-          <div class="sl sl-ok">  ChatGPT citations      ↑ 128%</div>
-          <div class="sl sl-ok">  Perplexity AI          found ✓</div>
-          <div class="sl sl-ok">  Google AI Overview     active ✓</div>
-          <div class="sl sl-ok">  Bing Copilot           indexed ✓</div>
-          <div class="sl sl-dim">▶ Entity analysis...</div>
-          <div class="sl">  Entity strength        <span class="sl-val">0.94</span></div>
-          <div class="sl sl-ok">  Schema: BlogPosting    VALID ✓</div>
-          <div class="sl sl-ok">  FAQ Schema             VALID ✓</div>
-          <div class="sl">  RAG signal             <span class="sl-hi">HIGH</span></div>
-          <div class="sl">  LLM training data      included</div>
-          <div class="sl sl-dim">▶ SEO cross-check...</div>
-          <div class="sl">  SERP position avg      <span class="sl-val">3.2</span></div>
-          <div class="sl sl-ok">  Core Web Vitals        PASS ✓</div>
-          <div class="sl">  Brand mentions/mo      <span class="sl-val">1,284</span></div>
-          <div class="sl sl-sep">  ──────────────────────────</div>
-          <div class="sl sl-ok">▶ GEO audit complete ✓</div>
-          <div class="sl sl-dim">  next scan in 24h...</div>
-          <!-- Kopie pro seamless loop -->
-          <div class="sl">$ geo-scan --domain prvni-pozice.com</div>
-          <div class="sl sl-dim">▶ Initializing AI visibility check...</div>
-          <div class="sl">  GEO score <span class="sl-bar">████████████░░</span> 94/100</div>
-          <div class="sl sl-ok">  ChatGPT citations      ↑ 128%</div>
-          <div class="sl sl-ok">  Perplexity AI          found ✓</div>
-          <div class="sl sl-ok">  Google AI Overview     active ✓</div>
-          <div class="sl sl-ok">  Bing Copilot           indexed ✓</div>
-          <div class="sl sl-dim">▶ Entity analysis...</div>
-          <div class="sl">  Entity strength        <span class="sl-val">0.94</span></div>
-          <div class="sl sl-ok">  Schema: BlogPosting    VALID ✓</div>
-          <div class="sl sl-ok">  FAQ Schema             VALID ✓</div>
-          <div class="sl">  RAG signal             <span class="sl-hi">HIGH</span></div>
-          <div class="sl">  LLM training data      included</div>
-          <div class="sl sl-dim">▶ SEO cross-check...</div>
-          <div class="sl">  SERP position avg      <span class="sl-val">3.2</span></div>
-          <div class="sl sl-ok">  Core Web Vitals        PASS ✓</div>
-          <div class="sl">  Brand mentions/mo      <span class="sl-val">1,284</span></div>
-          <div class="sl sl-sep">  ──────────────────────────</div>
-          <div class="sl sl-ok">▶ GEO audit complete ✓</div>
-          <div class="sl sl-dim">  next scan in 24h...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Layer 4: Laser paprsky z očí robota (SVG overlay) -->
-    <svg class="laser-svg" id="laserSvg" aria-hidden="true"
-      viewBox="0 0 700 400" preserveAspectRatio="none"
-      xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="lGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <!-- Oči robota ~63% a ~75% od leva, ~23% od hora → SVG coords -->
-      <line id="laserLeft"
-        x1="444" y1="92" x2="185" y2="127"
-        stroke="#aed301" stroke-width="1.2" stroke-opacity="0.4"
-        stroke-dasharray="3 4" filter="url(#lGlow)">
-        <animate attributeName="stroke-opacity" values="0.4;0.1;0.4" dur="2.2s" repeatCount="indefinite"/>
-      </line>
-      <line id="laserRight"
-        x1="524" y1="92" x2="185" y2="127"
-        stroke="#aed301" stroke-width="1.2" stroke-opacity="0.4"
-        stroke-dasharray="3 4" filter="url(#lGlow)">
-        <animate attributeName="stroke-opacity" values="0.4;0.1;0.4" dur="2.2s" begin="0.4s" repeatCount="indefinite"/>
-      </line>
-    </svg>
-
-    <!-- Layer 5: Dynamický světelný odlesk (cursor-reactive) -->
-    <div class="light-overlay" id="lightOverlay" aria-hidden="true"></div>
   </div>
 
   <!-- Text content (left side) -->
@@ -208,81 +209,166 @@ import macBot from '../../assets/hero/mac-bot.png';
     pointer-events: none;
   }
 
-  /* ── Hero scene — 3D kontejner ── */
-  .hero-scene {
+  /* ── Robot layer ── */
+  .hero-bot {
     position: absolute;
-    right: 0;
-    top: 50%;
-    width: clamp(340px, 46vw, 600px);
-    aspect-ratio: 4 / 3;
+    right: 2%;
+    bottom: 0;
+    width: clamp(200px, 26vw, 380px);
+    aspect-ratio: 528 / 749;
+    z-index: 3;
     pointer-events: none;
-    /* CSS vars z motion.js — scroll + mouse kombinace */
+    /* Parallax + 3D mouse tracking — CSS vars z motion.js */
     transform:
-      translateY(calc(-50% + var(--hero-exit-y, 0px)))
-      perspective(1200px)
-      rotateX(calc(var(--hero-rot-x, 1deg) + var(--hero-mouse-rx, 0deg)))
-      rotateY(calc(var(--hero-rot-y, -5deg) + var(--hero-mouse-ry, 0deg)));
-    transform-style: preserve-3d;
+      translateY(var(--bot-parallax, 0px))
+      perspective(900px)
+      rotateX(var(--head-rx, 0deg))
+      rotateY(var(--head-ry, 0deg));
+    transition: transform 200ms ease-out;
     will-change: transform;
   }
 
-  /* Společné styly vrstev */
-  .scene-body, .scene-head,
-  .screen-overlay, .laser-svg, .light-overlay {
+  .bot-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* Jemná float animace — CSS `translate` nekonflikuje s `transform` */
+    animation: botFloat 5s ease-in-out infinite;
+  }
+
+  @keyframes botFloat {
+    0%, 100% { translate: 0 0px; }
+    50%       { translate: 0 -12px; }
+  }
+
+  .bot-img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    display: block;
+    /* Vignette maska — bílé pozadí zmizí do tmavého hero pozadí */
+    mask-image: radial-gradient(ellipse 70% 82% at 50% 42%,
+      black 38%, rgba(0,0,0,0.75) 58%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 82% at 50% 42%,
+      black 38%, rgba(0,0,0,0.75) 58%, transparent 78%);
   }
 
-  /* ── Layer 1: Tělo robota ── */
-  .scene-body { z-index: 1; }
+  /* ── Oční záře ── */
+  .bot-eye {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(174, 211, 1, 0.7);
+    box-shadow:
+      0 0 5px 2px rgba(174, 211, 1, 0.45),
+      0 0 12px 6px rgba(174, 211, 1, 0.12);
+    transform: translate(-50%, -50%);
+    animation: eyePulse 2.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .bot-eye-l { left: 41%; top: 22%; }
+  .bot-eye-r { left: 59%; top: 22%; animation-delay: 0.5s; }
 
-  .scene-img {
+  @keyframes eyePulse {
+    0%, 100% {
+      opacity: 0.75;
+      box-shadow: 0 0 5px 2px rgba(174,211,1,0.45), 0 0 12px 6px rgba(174,211,1,0.12);
+    }
+    50% {
+      opacity: 0.3;
+      box-shadow: 0 0 2px 1px rgba(174,211,1,0.2), 0 0 6px 3px rgba(174,211,1,0.06);
+    }
+  }
+
+  /* ── Laserové světelné kužely ── */
+  .bot-lasers {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  /* ── Kurzorový odlesk ── */
+  .bot-light {
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+    transition: background 0.15s ease;
+  }
+
+  /* ── Mac vrstva ── */
+  .hero-mac {
+    position: absolute;
+    right: 17%;
+    bottom: 2%;
+    width: clamp(240px, 36vw, 510px);
+    aspect-ratio: 932 / 656;
+    z-index: 2;
+    pointer-events: none;
+    transform: translateY(var(--mac-parallax, 0px));
+    will-change: transform;
+  }
+
+  .mac-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    animation: macFloat 6.5s ease-in-out 1.6s infinite;
+  }
+
+  @keyframes macFloat {
+    0%, 100% { translate: 0 0px; }
+    50%       { translate: 0 -8px; }
+  }
+
+  .mac-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    /* Vignette maska — bílé pozadí zmizí */
+    mask-image: radial-gradient(ellipse 82% 78% at 50% 44%,
+      black 38%, rgba(0,0,0,0.72) 58%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 82% 78% at 50% 44%,
+      black 38%, rgba(0,0,0,0.72) 58%, transparent 80%);
   }
 
-  /* ── Layer 2: Hlava robota (clip + cursor tracking) ── */
-  .scene-head {
-    z-index: 2;
-    /* Clip na oblast hlavy — přibližně 55-87% šířky, 0-49% výšky */
-    clip-path: polygon(
-      55% 0%, 87% 0%,
-      92% 22%, 88% 42%,
-      71% 49%, 54% 42%,
-      50% 22%
-    );
-    /* Transform-origin na krk (71% šířky, 44% výšky prvku) */
-    transform-origin: 71% 44%;
-    transform:
-      perspective(800px)
-      rotateX(var(--head-rx, 0deg))
-      rotateY(var(--head-ry, 0deg));
-    transition: transform 150ms ease-out;
-    will-change: transform;
-  }
-
-  /* ── Layer 3: Screen overlay — přes laptop screen ── */
-  .screen-overlay {
-    z-index: 3;
-    /* Laptop screen v obrázku: cca left 9%, top 6%, width 35%, height 53% */
-    left: 9%;
-    top: 6%;
-    width: 35%;
-    height: 53%;
-    inset: auto; /* reset inset, použijeme explicit positioning */
+  /* ── Mac screen overlay — terminal text ── */
+  .mac-screen {
+    position: absolute;
+    left: 18%;
+    top: 7%;
+    width: 68%;
+    height: 57%;
     overflow: hidden;
-    border-radius: 4px;
-    /* Sklon odpovídající úhlu laptopního displeje */
-    transform: perspective(800px) rotateX(10deg) rotateY(-8deg);
-    background: rgba(5, 8, 15, 0.82);
-    mix-blend-mode: normal;
+    border-radius: 3px;
+    background: rgba(5, 8, 15, 0.88);
+    /* Mírný 3D sklon odpovídající úhlu laptopu */
+    transform: perspective(1000px) rotateX(5deg);
+    pointer-events: none;
   }
 
-  /* Scan-lines efekt */
+  /* Jemný zelený odlesk pod displejem */
+  .mac-screen-glow {
+    position: absolute;
+    left: 14%;
+    top: 3%;
+    width: 72%;
+    height: 68%;
+    background: radial-gradient(ellipse at 50% 90%,
+      rgba(174, 211, 1, 0.055) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* Scanlines */
   .screen-scanlines {
     position: absolute;
     inset: 0;
@@ -290,8 +376,8 @@ import macBot from '../../assets/hero/mac-bot.png';
       0deg,
       transparent,
       transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
+      rgba(0,0,0,0.07) 2px,
+      rgba(0,0,0,0.07) 4px
     );
     pointer-events: none;
     z-index: 2;
@@ -304,9 +390,9 @@ import macBot from '../../assets/hero/mac-bot.png';
     padding: 6% 8%;
   }
 
-  /* Scrollující text — 2× obsah, animace scrolluje přesně o 50% */
+  /* Scrollující terminálový text — 2× obsah, seamless loop */
   .screen-lines {
-    animation: screenScroll 14s linear infinite;
+    animation: screenScroll 16s linear infinite;
     will-change: transform;
   }
 
@@ -317,41 +403,30 @@ import macBot from '../../assets/hero/mac-bot.png';
 
   .sl {
     font-family: 'Courier New', 'Consolas', monospace;
-    font-size: clamp(4.5px, 0.7vw, 8px);
+    font-size: clamp(4.5px, 0.65vw, 7.5px);
     color: rgba(174, 211, 1, 0.8);
     line-height: 1.7;
     white-space: nowrap;
   }
-  .sl-dim    { color: rgba(174, 211, 1, 0.4); }
-  .sl-ok     { color: rgba(1, 211, 174, 0.75); }
-  .sl-hi     { color: #aed301; font-weight: bold; }
-  .sl-val    { color: rgba(255, 255, 255, 0.7); }
-  .sl-bar    { color: rgba(1, 211, 174, 0.6); }
-  .sl-sep    { color: rgba(174, 211, 1, 0.2); }
-
-  /* ── Layer 4: Laser SVG ── */
-  .laser-svg {
-    z-index: 4;
-    overflow: visible;
-    pointer-events: none;
-    inset: 0;
-  }
-
-  /* ── Layer 5: Světelný odlesk ── */
-  .light-overlay {
-    z-index: 5;
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-    transition: background 0.15s ease;
-  }
+  .sl-dim { color: rgba(174, 211, 1, 0.4); }
+  .sl-ok  { color: rgba(1, 211, 174, 0.75); }
+  .sl-hi  { color: #aed301; font-weight: bold; }
+  .sl-val { color: rgba(255, 255, 255, 0.7); }
+  .sl-bar { color: rgba(1, 211, 174, 0.6); }
+  .sl-sep { color: rgba(174, 211, 1, 0.2); }
 
   /* ── Mobile ── */
-  @media (max-width: 1000px) {
-    .hero-scene { width: 300px; right: -3%; opacity: 0.5; }
-    .screen-overlay { display: none; }
+  @media (max-width: 1100px) {
+    .hero-bot { width: 240px; right: 0; }
+    .hero-mac { right: 10%; width: clamp(200px, 28vw, 360px); }
+    .mac-screen { display: none; }
   }
-  @media (max-width: 640px) {
-    .hero-scene { width: 220px; opacity: 0.25; right: -8%; }
+  @media (max-width: 800px) {
+    .hero-bot { width: 200px; right: -3%; opacity: 0.55; }
+    .hero-mac { display: none; }
+  }
+  @media (max-width: 540px) {
+    .hero-bot { width: 160px; opacity: 0.3; right: -6%; }
   }
 
   /* ── Text content ── */
@@ -439,10 +514,13 @@ import macBot from '../../assets/hero/mac-bot.png';
 
   /* ── Reduced motion ── */
   @media (prefers-reduced-motion: reduce) {
-    .nebula-layer { animation: none !important; }
-    .badge-dot    { animation: none !important; }
-    .screen-lines { animation: none !important; }
-    .hero-scene   { transform: translateY(-50%) !important; }
-    .scene-head   { transform: none !important; }
+    .nebula-layer    { animation: none !important; }
+    .badge-dot       { animation: none !important; }
+    .screen-lines    { animation: none !important; }
+    .bot-inner       { animation: none !important; }
+    .mac-inner       { animation: none !important; }
+    .bot-eye         { animation: none !important; }
+    .hero-bot        { transform: none !important; }
+    .hero-mac        { transform: none !important; }
   }
 </style>

@@ -63,41 +63,29 @@ function initCrowdObserver() {
 
 /* ── 4. Hero Controller ── */
 function initHeroController() {
-  const hero = document.getElementById('heroSection');
+  const hero    = document.getElementById('heroSection');
   if (!hero) return;
 
-  const laserLeft    = document.getElementById('laserLeft');
-  const laserRight   = document.getElementById('laserRight');
-  const lightOverlay = document.getElementById('lightOverlay');
-  const laserSvg     = document.getElementById('laserSvg');
-  const root         = document.documentElement;
+  const heroBot = document.getElementById('heroBot');
+  const heroMac = document.getElementById('heroMac');
+  const botLight = document.getElementById('botLight');
+  const root    = document.documentElement;
 
   let heroH = hero.offsetHeight;
   let rafPending = false;
 
-  /* Scroll phases — CSS vars pro perspektivu + exit */
+  /* Scroll parallax — robot a mac se pohybují různou rychlostí (hloubka) */
   function applyScrollPhase() {
-    const p = Math.min(Math.max(window.scrollY / heroH, 0), 1);
+    const sy = window.scrollY;
+    const p  = Math.min(Math.max(sy / heroH, 0), 1);
 
-    // Perspektiva se mění průběžně: jemný 3D pohyb scény
-    const rotY  = -5 + p * 8;         // -5° → +3°
-    const rotX  =  1 - p * 3;         // +1° → -2°
-    const exitY = p > 0.82 ? ((p - 0.82) / 0.18) * -90 : 0;
+    // Parallax: robot rychleji (blíž), mac pomaleji (dál)
+    root.style.setProperty('--bot-parallax', `${-(sy * 0.13).toFixed(1)}px`);
+    root.style.setProperty('--mac-parallax', `${-(sy * 0.06).toFixed(1)}px`);
 
-    root.style.setProperty('--hero-rot-y',  `${rotY.toFixed(2)}deg`);
-    root.style.setProperty('--hero-rot-x',  `${rotX.toFixed(2)}deg`);
-    root.style.setProperty('--hero-exit-y', `${exitY.toFixed(1)}px`);
-
-    // Laser drift při 35%+ scrollu — mírně k vieweru
-    if (laserLeft && laserRight) {
-      if (p > 0.35) {
-        laserLeft.setAttribute('x2', '350');  laserLeft.setAttribute('y2', '350');
-        laserRight.setAttribute('x2', '350'); laserRight.setAttribute('y2', '350');
-      } else {
-        laserLeft.setAttribute('x2', '185');  laserLeft.setAttribute('y2', '127');
-        laserRight.setAttribute('x2', '185'); laserRight.setAttribute('y2', '127');
-      }
-    }
+    // Fade-out při hlubokém scrollu
+    if (heroBot) heroBot.style.opacity = p > 0.72 ? String(Math.max(0, 1 - (p - 0.72) / 0.28).toFixed(3)) : '';
+    if (heroMac) heroMac.style.opacity = p > 0.60 ? String(Math.max(0, 1 - (p - 0.60) / 0.40).toFixed(3)) : '';
   }
 
   if (!rm) {
@@ -123,37 +111,20 @@ function initHeroController() {
       const cx = ((e.clientX - rect.left) / rect.width  - 0.5) * 2; // -1..1
       const cy = ((e.clientY - rect.top)  / rect.height - 0.5) * 2;
 
-      // Scéna — jemná micro-rotace podle myši (přidá se ke scroll rotaci)
-      root.style.setProperty('--hero-mouse-ry', `${(cx * 3).toFixed(2)}deg`);
-      root.style.setProperty('--hero-mouse-rx', `${(cy * -1.5).toFixed(2)}deg`);
+      // Robot — jemná 3D rotace dle myši (celý robot se mírně natáčí)
+      root.style.setProperty('--head-ry', `${(cx * 8).toFixed(2)}deg`);
+      root.style.setProperty('--head-rx', `${(cy * -5).toFixed(2)}deg`);
 
-      // Hlava robota — výraznější tracking
-      root.style.setProperty('--head-ry', `${(cx * 10).toFixed(2)}deg`);
-      root.style.setProperty('--head-rx', `${(cy * -6).toFixed(2)}deg`);
-
-      // Dynamický světelný odlesk
-      if (lightOverlay) {
-        lightOverlay.style.background = `radial-gradient(500px circle at ${(50 + cx * 28).toFixed(1)}% ${(50 + cy * 18).toFixed(1)}%, rgba(1,211,174,0.07) 0%, transparent 70%)`;
-      }
-
-      // Laser tracking — míří k pozici kurzoru v SVG souřadnicích
-      if (laserSvg && laserLeft && laserRight) {
-        const svgRect = laserSvg.getBoundingClientRect();
-        const tx = Math.max(50,  Math.min(650, ((e.clientX - svgRect.left) / svgRect.width)  * 700));
-        const ty = Math.max(50,  Math.min(380, ((e.clientY - svgRect.top)  / svgRect.height) * 400));
-        laserLeft.setAttribute('x2',  tx.toFixed(0)); laserLeft.setAttribute('y2',  ty.toFixed(0));
-        laserRight.setAttribute('x2', tx.toFixed(0)); laserRight.setAttribute('y2', ty.toFixed(0));
+      // Dynamický světelný odlesk na robotovi
+      if (botLight) {
+        botLight.style.background = `radial-gradient(350px circle at ${(50 + cx * 30).toFixed(1)}% ${(50 + cy * 20).toFixed(1)}%, rgba(1,211,174,0.08) 0%, transparent 65%)`;
       }
     });
 
     hero.addEventListener('mouseleave', () => {
-      root.style.setProperty('--hero-mouse-ry', '0deg');
-      root.style.setProperty('--hero-mouse-rx', '0deg');
       root.style.setProperty('--head-ry', '0deg');
       root.style.setProperty('--head-rx', '0deg');
-      if (lightOverlay) lightOverlay.style.background = '';
-      if (laserLeft)  { laserLeft.setAttribute('x2', '185');  laserLeft.setAttribute('y2', '127'); }
-      if (laserRight) { laserRight.setAttribute('x2', '185'); laserRight.setAttribute('y2', '127'); }
+      if (botLight) botLight.style.background = '';
     });
   }
 }
