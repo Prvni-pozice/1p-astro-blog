@@ -13,47 +13,38 @@ interface VideoItem {
   url: string;
 }
 
-// Zjistí, zda je video Short: youtube.com/shorts/ID přesměruje pryč pro normální video
-async function isShort(videoId: string): Promise<boolean> {
-  try {
-    const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, {
-      redirect: 'follow',
-      signal: AbortSignal.timeout(4000),
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AstroBot/1.0)' },
-    });
-    // Shorts zůstanou na /shorts/ URL, normální videa se přesměrují na /watch?v=
-    return res.url.includes('/shorts/');
-  } catch {
-    return false;
-  }
-}
-
-function parseEntry(entry: string): VideoItem {
+// Detekce shorts/videí přímo z RSS <link href> — žádné extra HTTP requesty
+// YouTube RSS obsahuje: shorts → href="/shorts/ID", videa → href="/watch?v=ID"
+function parseEntry(entry: string): VideoItem & { isShort: boolean } {
   const videoId = (entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) ?? [])[1] ?? '';
   const title   = (entry.match(/<title>([^<]+)<\/title>/)            ?? [])[1] ?? '';
   const pub     = (entry.match(/<published>([^<]+)<\/published>/)     ?? [])[1] ?? '';
+  const link    = (entry.match(/<link[^>]+href="([^"]+)"/)            ?? [])[1] ?? '';
   const date    = pub ? new Date(pub).toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  const short   = link.includes('/shorts/');
   return {
     id: videoId,
     title: title.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"'),
     published: date,
-    thumbnail: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
-    url: `https://www.youtube.com/watch?v=${videoId}`,
+    thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    url: short ? `https://www.youtube.com/shorts/${videoId}` : `https://www.youtube.com/watch?v=${videoId}`,
+    isShort: short,
   };
 }
 
 let videos: VideoItem[] = [];
+let shorts: VideoItem[] = [];
 
 try {
   const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
   const res = await fetch(rssUrl, { signal: AbortSignal.timeout(8000) });
   if (res.ok) {
     const xml = await res.text();
-    const entries = xml.match(/<entry>([\s\S]*?)<\/entry>/g) ?? [];
-    // Vezmeme prvních 15 kandidátů a zkontrolujeme paralelně
-    const candidates = entries.slice(0, 15).map(parseEntry).filter(v => v.id);
-    const shortFlags = await Promise.all(candidates.map(v => isShort(v.id)));
-    videos = candidates.filter((_, i) => !shortFlags[i]).slice(0, 3);
+    const all = (xml.match(/<entry>([\s\S]*?)<\/entry>/g) ?? [])
+      .map(parseEntry)
+      .filter(v => v.id);
+    videos = all.filter(v => !v.isShort).slice(0, 3);
+    shorts = all.filter(v =>  v.isShort).slice(0, 3);
   }
 } catch {
   // tiché selhání → fallback níže
@@ -67,6 +58,8 @@ if (videos.length === 0) {
     { id: '', title: 'Schema markup krok za krokem',           published: 'Leden 2026', thumbnail: '', url: channelUrl },
   ];
 }
+
+const videoCount = videos.length; // pro grid-template-columns
 ---
 
 <section class="yt-section section" aria-labelledby="yt-heading">
@@ -89,28 +82,14 @@ if (videos.length === 0) {
         </p>
       </div>
 
-      <div class="yt-videos">
+      <!-- Videa — grid se přizpůsobí počtu (1–3) -->
+      <div class="yt-videos" style={`--vid-count: ${videoCount}`}>
         {videos.map((video, i) => (
-          <a
-            href={video.url}
-            target="_blank"
-            rel="noopener"
-            class="yt-card"
-            aria-label={video.title}
-            style={`animation-delay: ${i * 0.1}s`}
-          >
-            <div class="yt-thumb" aria-hidden="true">
+          <a href={video.url} target="_blank" rel="noopener" class="yt-card" aria-label={video.title}>
+            <div class="yt-thumb">
               {video.thumbnail ? (
-                <img
-                  src={video.thumbnail}
-                  alt=""
-                  class="yt-thumb-img"
-                  loading="lazy"
-                  decoding="async"
-                  width="480"
-                  height="360"
-                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-                />
+                <img src={video.thumbnail} alt="" class="yt-thumb-img" loading="lazy" decoding="async" width="480" height="360"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
               ) : null}
               <div class="yt-thumb-fallback" style={video.thumbnail ? 'display:none' : ''} aria-hidden="true">
                 <svg viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg" width="80" height="60">
@@ -133,15 +112,38 @@ if (videos.length === 0) {
             </div>
             <div class="yt-card-body">
               <p class="yt-card-title">{video.title}</p>
-              {video.published && (
-                <div class="yt-card-meta">
-                  <span>{video.published}</span>
-                </div>
-              )}
+              {video.published && <div class="yt-card-meta"><span>{video.published}</span></div>}
             </div>
           </a>
         ))}
       </div>
+
+      <!-- Shorts -->
+      {shorts.length > 0 && (
+        <div class="yt-shorts-wrap">
+          <div class="yt-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.77 10.32l-1.2-.5L18 9.06a3.74 3.74 0 0 0-3.5-6.62L6 6.94a3.74 3.74 0 0 0 .23 7l1.2.49L6 14.94a3.74 3.74 0 0 0 3.5 6.62l8.5-4.5a3.74 3.74 0 0 0-.23-6.74z"/>
+            </svg>
+            Shorts
+          </div>
+          <div class="yt-shorts">
+            {shorts.map((s) => (
+              <a href={s.url} target="_blank" rel="noopener" class="yt-short-card" aria-label={s.title}>
+                <div class="yt-short-thumb">
+                  <img src={s.thumbnail} alt="" class="yt-thumb-img" loading="lazy" decoding="async" width="480" height="360" />
+                  <div class="yt-play yt-play--small">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                  </div>
+                </div>
+                <p class="yt-short-title">{s.title}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <!-- CTA -->
       <div class="yt-cta">
@@ -211,24 +213,101 @@ if (videos.length === 0) {
     max-width: none;
   }
 
-  /* ── Video cards ── */
+  /* ── Video cards — grid se přizpůsobí počtu videí ── */
   .yt-videos {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--vid-count, 3), 1fr);
     gap: 1.25rem;
     margin-bottom: 2rem;
   }
 
   @media (max-width: 700px) {
-    .yt-videos {
-      grid-template-columns: 1fr;
-    }
+    .yt-videos { grid-template-columns: 1fr; }
   }
 
   @media (min-width: 701px) and (max-width: 960px) {
-    .yt-videos {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    .yt-videos { grid-template-columns: repeat(min(var(--vid-count, 2), 2), 1fr); }
+  }
+
+  /* ── Shorts ── */
+  .yt-shorts-wrap {
+    margin-bottom: 2rem;
+  }
+
+  .yt-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #ff4444;
+    margin-bottom: 0.85rem;
+  }
+
+  .yt-shorts {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .yt-short-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    width: clamp(100px, 15vw, 140px);
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .yt-short-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .yt-short-card:hover .yt-play {
+    background: #ff4444;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .yt-short-thumb {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-base);
+    border: 1px solid var(--border);
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .yt-short-card:hover .yt-short-thumb {
+    border-color: rgba(255, 68, 68, 0.35);
+  }
+
+  .yt-short-thumb .yt-thumb-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .yt-short-title {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .yt-play--small {
+    width: 30px;
+    height: 30px;
   }
 
   .yt-card {
