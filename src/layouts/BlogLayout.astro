@@ -350,22 +350,10 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     border: 1px solid var(--border-accent);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    position: relative;
-    overflow: hidden;
     transition:
       border-color 0.25s var(--ease),
       transform    0.25s var(--ease),
       box-shadow   0.25s var(--ease);
-  }
-
-  .sidebar-cta::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% -20%, var(--accent-dim) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s var(--ease);
-    pointer-events: none;
   }
 
   .sidebar-cta:hover {
@@ -373,8 +361,6 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     transform: translateY(-3px);
     box-shadow: 0 8px 28px rgba(174, 211, 1, 0.08);
   }
-
-  .sidebar-cta:hover::after { opacity: 1; }
 
   .sidebar-cta-icon {
     color: var(--accent);
@@ -442,22 +428,10 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem;
-    position: relative;
-    overflow: hidden;
     transition:
       border-color 0.25s var(--ease),
       transform    0.25s var(--ease),
       box-shadow   0.25s var(--ease);
-  }
-
-  .sidebar-tags::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% -20%, var(--accent-dim) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s var(--ease);
-    pointer-events: none;
   }
 
   .sidebar-tags:hover {
@@ -466,29 +440,15 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     box-shadow: 0 6px 20px rgba(174, 211, 1, 0.06);
   }
 
-  .sidebar-tags:hover::after { opacity: 1; }
-
   .sidebar-youtube {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.25rem;
-    position: relative;
-    overflow: hidden;
     transition:
       border-color 0.25s var(--ease),
       transform    0.25s var(--ease),
       box-shadow   0.25s var(--ease);
-  }
-
-  .sidebar-youtube::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(255, 68, 68, 0.08) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s var(--ease);
-    pointer-events: none;
   }
 
   .sidebar-youtube:hover {
@@ -496,8 +456,6 @@ const categoryLabel = category === 'ai' ? 'AI' : 'GEO';
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 68, 68, 0.07);
   }
-
-  .sidebar-youtube:hover::after { opacity: 1; }
 
   .youtube-link {
     display: flex;

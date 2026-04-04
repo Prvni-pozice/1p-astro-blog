@@ -353,11 +353,13 @@ img {
 /* ============================================================
    Light sweep na kartách
    ============================================================ */
-.blog-card, .article-card, [class*="-card"] {
+.blog-card, .article-card, [class*="-card"],
+.sidebar-cta, .sidebar-tags, .sidebar-youtube {
   position: relative;
   overflow: hidden;
 }
-.blog-card::after, .article-card::after, [class*="-card"]::after {
+.blog-card::after, .article-card::after, [class*="-card"]::after,
+.sidebar-cta::after, .sidebar-tags::after, .sidebar-youtube::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -367,7 +369,8 @@ img {
   transition: background-position 0.5s ease;
   pointer-events: none;
 }
-.blog-card:hover::after, .article-card:hover::after, [class*="-card"]:hover::after {
+.blog-card:hover::after, .article-card:hover::after, [class*="-card"]:hover::after,
+.sidebar-cta:hover::after, .sidebar-tags:hover::after, .sidebar-youtube:hover::after {
   background-position: 100% 0;
 }
 
