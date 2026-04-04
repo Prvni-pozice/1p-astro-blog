@@ -99,8 +99,8 @@ import mac from '../../assets/hero/mac.png';
       <!-- Jemné oční záře (pozice 28% a 42% zleva, pohybují se za kurzorem) -->
       <div class="bot-eye bot-eye-l" id="botEyeL" aria-hidden="true"></div>
       <div class="bot-eye bot-eye-r" id="botEyeR" aria-hidden="true"></div>
-      <!-- Laser světelné kužely — CSS rotate na celém SVG, spolehlivé -->
-      <svg id="botLasers" class="bot-lasers" viewBox="0 0 528 749"
+      <!-- Laser světelné kužely — každý rotuje kolem svého oka -->
+      <svg id="botLaserL" class="bot-lasers bot-laser-l" viewBox="0 0 528 749"
         preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
@@ -109,16 +109,21 @@ import mac from '../../assets/hero/mac.png';
             <stop offset="70%" stop-color="#aed301" stop-opacity="0.05"/>
             <stop offset="100%" stop-color="#aed301" stop-opacity="0"/>
           </linearGradient>
+        </defs>
+        <path d="M 148 165 L 80 749 L 216 749 Z" fill="url(#coneGradL)">
+          <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" repeatCount="indefinite"/>
+        </path>
+      </svg>
+      <svg id="botLaserR" class="bot-lasers bot-laser-r" viewBox="0 0 528 749"
+        preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
           <linearGradient id="coneGradR" x1="0.5" y1="0" x2="0.5" y2="1">
             <stop offset="0%" stop-color="#aed301" stop-opacity="0.18"/>
             <stop offset="70%" stop-color="#aed301" stop-opacity="0.05"/>
             <stop offset="100%" stop-color="#aed301" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        <!-- Kužele mířící přímo dolů — směr řídí CSS rotate na celém SVG -->
-        <path d="M 148 165 L 80 749 L 216 749 Z" fill="url(#coneGradL)">
-          <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" repeatCount="indefinite"/>
-        </path>
         <path d="M 222 165 L 154 749 L 290 749 Z" fill="url(#coneGradR)">
           <animate attributeName="opacity" values="1;0.28;1" dur="3.8s" begin="0.9s" repeatCount="indefinite"/>
         </path>
@@ -290,10 +295,11 @@ import mac from '../../assets/hero/mac.png';
     height: 100%;
     pointer-events: none;
     overflow: visible;
-    /* JS nastaví rotate(); origin = střed mezi očima */
-    transform-origin: 35% 22%;
     transition: transform 0.25s ease-out;
   }
+  /* Každý kužel rotuje kolem svého oka (apex = oko) */
+  .bot-laser-l { transform-origin: 28% 22%; }
+  .bot-laser-r { transform-origin: 42% 22%; }
 
   /* ── Kurzorový odlesk ── */
   .bot-light {
@@ -346,14 +352,14 @@ import mac from '../../assets/hero/mac.png';
   /* ── Mac screen overlay — terminal text ── */
   .mac-screen {
     position: absolute;
-    left: 11.3%;
-    top: 8.8%;
-    width: 51.5%;
-    height: 57%;
+    left: 11%;
+    top: 7.4%;
+    width: 52.1%;
+    height: 60%;
     overflow: hidden;
     border-radius: 3px;
     background: #05080fe0;
-    transform: perspective(280px) rotateX(3deg) rotateY(10deg) rotateZ(-6deg);
+    transform: perspective(280px) rotateX(2deg) rotateY(9deg) rotate(-6deg);
     pointer-events: none;
   }
 
@@ -435,16 +441,17 @@ import mac from '../../assets/hero/mac.png';
     position: relative;
     z-index: 10;
     padding-block: 4rem;
-    max-width: 580px;
+    max-width: 720px;
     margin-inline-start: 0;
-    /* 2× levý padding oproti standardnímu containeru */
     padding-inline-start: clamp(2rem, 8vw, 4rem);
+    padding-left: 12%;
   }
 
   /* Na úzkých obrazovkách standardní zarovnání jako zbytek stránky */
   @media (max-width: 860px) {
     .hero-content {
       padding-inline-start: clamp(1rem, 4vw, 2rem);
+      padding-left: clamp(1rem, 4vw, 2rem);
       margin-inline: auto;
     }
   }

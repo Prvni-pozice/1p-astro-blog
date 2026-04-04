@@ -71,21 +71,22 @@ function initHeroController() {
   const botLight = document.getElementById('botLight');
   const eyeL     = document.getElementById('botEyeL');
   const eyeR     = document.getElementById('botEyeR');
-  const botLasers = document.getElementById('botLasers');
+  const botLaserL = document.getElementById('botLaserL');
+  const botLaserR = document.getElementById('botLaserR');
   const root     = document.documentElement;
 
   let heroH  = hero.offsetHeight;
   let rafPending = false;
   let curCx  = 0; // aktuální cursor x offset (−1..1)
 
-  /* updateCones — CSS rotate na celém .bot-lasers SVG
-     -25°: kužele míří vlevo-nahoru (na horní část Mac displeje)
-     -5°:  kužele míří vlevo-dolů  (na klávesnici Macu) — při plném scrollu
-     cursor posunuje ±12°                                                      */
+  /* updateCones — každý kužel rotuje kolem svého oka
+     scroll=0: 80°, scroll=1: 28° (rozsah 52°)
+     cursor posunuje ±12°                          */
   function updateCones(cx, scrollP) {
-    if (!botLasers) return;
-    const angle = -25 + scrollP * 20 + cx * 12;
-    botLasers.style.transform = `rotate(${angle.toFixed(1)}deg)`;
+    const angle = 80 - scrollP * 52 + cx * 12;
+    const val = `rotate(${angle.toFixed(1)}deg)`;
+    if (botLaserL) botLaserL.style.transform = val;
+    if (botLaserR) botLaserR.style.transform = val;
   }
 
   /* Scroll parallax — robot a mac se pohybují různou rychlostí (hloubka) */
