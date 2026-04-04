@@ -94,8 +94,8 @@ function initHeroController() {
         laserLeft.setAttribute('x2', '350');  laserLeft.setAttribute('y2', '350');
         laserRight.setAttribute('x2', '350'); laserRight.setAttribute('y2', '350');
       } else {
-        laserLeft.setAttribute('x2', '192');  laserLeft.setAttribute('y2', '205');
-        laserRight.setAttribute('x2', '192'); laserRight.setAttribute('y2', '205');
+        laserLeft.setAttribute('x2', '185');  laserLeft.setAttribute('y2', '127');
+        laserRight.setAttribute('x2', '185'); laserRight.setAttribute('y2', '127');
       }
     }
   }
@@ -152,8 +152,8 @@ function initHeroController() {
       root.style.setProperty('--head-ry', '0deg');
       root.style.setProperty('--head-rx', '0deg');
       if (lightOverlay) lightOverlay.style.background = '';
-      if (laserLeft)  { laserLeft.setAttribute('x2', '192');  laserLeft.setAttribute('y2', '205'); }
-      if (laserRight) { laserRight.setAttribute('x2', '192'); laserRight.setAttribute('y2', '205'); }
+      if (laserLeft)  { laserLeft.setAttribute('x2', '185');  laserLeft.setAttribute('y2', '127'); }
+      if (laserRight) { laserRight.setAttribute('x2', '185'); laserRight.setAttribute('y2', '127'); }
     });
   }
 }

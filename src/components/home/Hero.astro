@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import humanoid from '../../assets/hero/humanoid.png';
+import macBot from '../../assets/hero/mac-bot.png';
 ---
 
 <section class="hero" id="heroSection" aria-label="Úvod">
@@ -18,10 +18,10 @@ import humanoid from '../../assets/hero/humanoid.png';
     <!-- Layer 1: Robot tělo + laptop (plný obrázek) -->
     <div class="scene-body" id="robotBody">
       <Image
-        src={humanoid}
+        src={macBot}
         alt=""
-        width={1344}
-        height={768}
+        width={1200}
+        height={896}
         format="webp"
         quality={85}
         loading="eager"
@@ -35,10 +35,10 @@ import humanoid from '../../assets/hero/humanoid.png';
          Clip polygon odpovídá oblasti hlavy v obrázku 1344×768 -->
     <div class="scene-head" id="robotHead">
       <Image
-        src={humanoid}
+        src={macBot}
         alt=""
-        width={1344}
-        height={768}
+        width={1200}
+        height={896}
         format="webp"
         quality={85}
         loading="eager"
@@ -109,15 +109,15 @@ import humanoid from '../../assets/hero/humanoid.png';
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
-      <!-- Oči robota ~35-42% od leva, ~24% od hora → SVG coords -->
+      <!-- Oči robota ~63% a ~75% od leva, ~23% od hora → SVG coords -->
       <line id="laserLeft"
-        x1="248" y1="97" x2="192" y2="205"
+        x1="444" y1="92" x2="185" y2="127"
         stroke="#aed301" stroke-width="1.2" stroke-opacity="0.4"
         stroke-dasharray="3 4" filter="url(#lGlow)">
         <animate attributeName="stroke-opacity" values="0.4;0.1;0.4" dur="2.2s" repeatCount="indefinite"/>
       </line>
       <line id="laserRight"
-        x1="296" y1="97" x2="192" y2="205"
+        x1="524" y1="92" x2="185" y2="127"
         stroke="#aed301" stroke-width="1.2" stroke-opacity="0.4"
         stroke-dasharray="3 4" filter="url(#lGlow)">
         <animate attributeName="stroke-opacity" values="0.4;0.1;0.4" dur="2.2s" begin="0.4s" repeatCount="indefinite"/>
@@ -214,7 +214,7 @@ import humanoid from '../../assets/hero/humanoid.png';
     right: 0;
     top: 50%;
     width: clamp(340px, 46vw, 600px);
-    aspect-ratio: 7 / 4;
+    aspect-ratio: 4 / 3;
     pointer-events: none;
     /* CSS vars z motion.js — scroll + mouse kombinace */
     transform:
@@ -248,15 +248,15 @@ import humanoid from '../../assets/hero/humanoid.png';
   /* ── Layer 2: Hlava robota (clip + cursor tracking) ── */
   .scene-head {
     z-index: 2;
-    /* Clip na oblast hlavy — přibližně 27-66% šířky, 0-44% výšky */
+    /* Clip na oblast hlavy — přibližně 55-87% šířky, 0-49% výšky */
     clip-path: polygon(
-      27% 0%, 66% 0%,
-      70% 32%, 63% 42%,
-      50% 46%, 37% 42%,
-      30% 32%
+      55% 0%, 87% 0%,
+      92% 22%, 88% 42%,
+      71% 49%, 54% 42%,
+      50% 22%
     );
-    /* Transform-origin na krk (50% šířky, 42% výšky prvku) */
-    transform-origin: 50% 42%;
+    /* Transform-origin na krk (71% šířky, 44% výšky prvku) */
+    transform-origin: 71% 44%;
     transform:
       perspective(800px)
       rotateX(var(--head-rx, 0deg))
@@ -268,16 +268,16 @@ import humanoid from '../../assets/hero/humanoid.png';
   /* ── Layer 3: Screen overlay — přes laptop screen ── */
   .screen-overlay {
     z-index: 3;
-    /* Laptop screen v obrázku: cca left 7%, top 22%, width 43%, height 58% */
-    left: 7%;
-    top: 22%;
-    width: 43%;
-    height: 58%;
+    /* Laptop screen v obrázku: cca left 9%, top 6%, width 35%, height 53% */
+    left: 9%;
+    top: 6%;
+    width: 35%;
+    height: 53%;
     inset: auto; /* reset inset, použijeme explicit positioning */
     overflow: hidden;
     border-radius: 4px;
-    /* Lehký sklon odpovídající úhlu laptopního displeje */
-    transform: perspective(600px) rotateX(4deg) rotateY(-2deg);
+    /* Sklon odpovídající úhlu laptopního displeje */
+    transform: perspective(800px) rotateX(10deg) rotateY(-8deg);
     background: rgba(5, 8, 15, 0.82);
     mix-blend-mode: normal;
   }
