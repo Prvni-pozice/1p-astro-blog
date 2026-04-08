@@ -63,7 +63,7 @@ const siteUrl = 'https://blog.prvni-pozice.com';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Sitemap -->
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
 
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="První pozice Blog RSS" href="/rss.xml" />
@@ -84,9 +84,13 @@ const siteUrl = 'https://blog.prvni-pozice.com';
         "https://www.youtube.com/@prvnipozice"
       ]
     })} />
+
+    <!-- Extra head slot (schemas, per-page meta) -->
+    <slot name="head" />
   </head>
 
   <body>
+    <a href="#main" class="skip-link">Přeskočit na obsah</a>
     <Header />
     <main id="main">
       <slot />
@@ -94,6 +98,25 @@ const siteUrl = 'https://blog.prvni-pozice.com';
     <Footer />
 
     <style is:global>
+      /* Skip link */
+      .skip-link {
+        position: absolute;
+        top: -100%;
+        left: 1rem;
+        z-index: 10000;
+        background: var(--accent);
+        color: #08080d;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        text-decoration: none;
+        transition: top 0.1s;
+      }
+      .skip-link:focus {
+        top: 0;
+      }
+
       /* Legacy .reveal class support (motion.js handles activation) */
       .reveal {
         opacity: 0;

@@ -1,0 +1,19 @@
+# llms.txt — https://llmstxt.org
+
+> Blog agentury První pozice zaměřený na SEO, GEO (Generative Engine Optimization) a využití umělé inteligence v digitálním marketingu.
+
+## Sekce
+
+- [Všechny články](https://blog.prvni-pozice.com/)
+- [AI – umělá inteligence v marketingu](https://blog.prvni-pozice.com/ai/)
+- [GEO – Generative Engine Optimization](https://blog.prvni-pozice.com/geo/)
+
+## Strojové zdroje
+
+- [RSS feed](https://blog.prvni-pozice.com/rss.xml)
+- [Sitemap](https://blog.prvni-pozice.com/sitemap.xml)
+
+## O autorovi
+
+První pozice je česká digitální agentura specializující se na SEO, GEO a online marketing.
+Web: https://www.prvni-pozice.com
