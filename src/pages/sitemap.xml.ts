@@ -3,7 +3,7 @@ import type { APIContext } from 'astro';
 
 export async function GET(_context: APIContext): Promise<Response> {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const site = 'https://blog.prvni-pozice.com';
+  const site = 'https://geo.prvni-pozice.com';
 
   const staticPages = [
     { url: `${site}/`, priority: '1.0', changefreq: 'weekly' },

@@ -2,7 +2,7 @@
 title: "Co je GEO a proč je to nejdůležitější posun ve vyhledávání za posledních 10 let"
 description: "Generative Engine Optimization přichází. Pokud ještě nevíte, co to je a jak ovlivní váš web, čtěte dál — čas začít je právě teď."
 pubDate: 2026-03-28
-category: "ai"
+category: "geo"
 tags: ["GEO", "AI vyhledávání", "SEO budoucnost"]
 featured: true
 readingTime: 7
